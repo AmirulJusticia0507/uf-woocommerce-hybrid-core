@@ -114,3 +114,20 @@ Dashboard WordPress → menu **XIV** menyediakan panel CRUD produk tanpa membuka
 - **Tambah Produk** — nama, deskripsi, harga (reguler & promo), SKU, stok, kategori (pilih atau buat baru), gambar utama & galeri (via media library)
 - **Tipe produk:** *Simple* (harga tunggal) atau *Variable* (ukuran XS–2X dengan harga & stok per ukuran → otomatis jadi variasi WooCommerce)
 - Semua operasi memakai API resmi `WC_Product`/`WC_Product_Variation` dan nonce check, jadi hasilnya langsung tampil & bisa dibeli di toko (termasuk selector ukuran di halaman produk).
+
+---
+
+## 💳 Pembayaran QRIS
+
+Checkout wizard (INFORMATION → SHIPPING → PAYMENT) memindahkan elemen `#payment` WooCommerce asli ke step **PAYMENT**, jadi metode dari plugin gateway mana pun otomatis muncul di sana tanpa perubahan tema.
+
+WooCommerce **tidak** menyediakan QRIS bawaan — perlu plugin payment gateway yang support QRIS:
+
+1. Install & aktifkan salah satu plugin (rekomendasi umum):
+   - **Midtrans WooCommerce** (metode *QRIS* tersedia)
+   - **Xendit WooCommerce**
+   - **Duitku** atau **Tripay**
+2. **WooCommerce → Settings → Payments** → aktifkan gateway-nya.
+3. Masukkan **Merchant ID / Server Key / API Key** dari akun merchant (gunakan mode *Sandbox* untuk testing).
+4. Aktifkan metode **QRIS** di pengaturan gateway.
+5. Test order → step **PAYMENT** menampilkan QRIS, redirect ke halaman pembayaran (QRIS dinamis, verifikasi otomatis).
