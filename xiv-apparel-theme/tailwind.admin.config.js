@@ -1,12 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   prefix: 'xiv-',
+  // Preflight dimatikan agar tidak merusak styling bawaan wp-admin.
+  corePlugins: { preflight: false },
   content: [
-    './**/*.php',
-    '!./inc/admin-crud.php',
-    './assets/src/js/**/*.js',
-    './inc/**/*.php',
-    './woocommerce/**/*.php'
+    './inc/admin-crud.php',
+    './assets/admin/js/**/*.js'
   ],
   theme: {
     extend: {
@@ -21,9 +20,6 @@ module.exports = {
         'display': ['"Syne"', '"Space Grotesk"', 'sans-serif'],
         'sans': ['"Inter"', 'sans-serif'],
         'mono': ['"JetBrains Mono"', 'monospace']
-      },
-      aspectRatio: {
-        '3/4': '3 / 4'
       }
     }
   },

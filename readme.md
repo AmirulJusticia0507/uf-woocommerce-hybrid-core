@@ -76,7 +76,8 @@ xiv-apparel-theme/
 │   ├── src/js/             # app / filters / cart / checkout (vanilla JS)
 │   ├── admin/              # Asset panel admin (media uploader, CSS)
 │   └── dist/               # Hasil build (di-generate)
-├── tailwind.config.js      # Prefix xiv- + design tokens
+├── tailwind.config.js      # Prefix xiv- + design tokens (frontend)
+├── tailwind.admin.config.js # Build Tailwind khusus admin (tanpa preflight)
 ├── postcss.config.js
 ├── package.json            # Scripts dev/build via tailwind + esbuild
 └── .gitignore

@@ -1,202 +1,55 @@
-.xiv-admin-title {
-	margin-bottom: 4px !important;
-}
+@tailwind components;
+@tailwind utilities;
 
-.xiv-admin-sub {
-	color: #6b7280;
-	margin-top: 0;
-}
+@layer components {
+  /* Tabel produk: thumbnail rapi */
+  .xiv-admin-table img {
+    width: 48px;
+    height: 64px;
+    object-fit: cover;
+    display: block;
+  }
 
-.xiv-admin-stats {
-	display: flex;
-	gap: 16px;
-	margin: 20px 0;
-	flex-wrap: wrap;
-}
+  /* Preview gambar utama */
+  .xiv-media-preview {
+    width: 160px;
+    height: 213px;
+    background: #f0f0f1;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
 
-.xiv-admin-stat {
-	background: #0a0a0a;
-	color: #f4f4f2;
-	border-radius: 4px;
-	padding: 16px 24px;
-	min-width: 140px;
-}
+  .xiv-media-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
-.xiv-admin-stat-value {
-	display: block;
-	font-size: 28px;
-	font-weight: 800;
-	line-height: 1;
-}
+  /* Preview galeri */
+  .xiv-gallery-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
 
-.xiv-admin-stat-label {
-	display: block;
-	font-size: 11px;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	margin-top: 6px;
-	opacity: 0.7;
-}
+  .xiv-gallery-preview img {
+    width: 64px;
+    height: 85px;
+    object-fit: cover;
+    border: 1px solid #dcdcde;
+    cursor: pointer;
+  }
 
-.xiv-admin-section {
-	margin: 28px 0 12px;
-}
+  /* Link hapus berbahaya */
+  .xiv-admin-delete {
+    color: #b32d2e;
+  }
 
-.xiv-admin .button-hero {
-	height: auto;
-	padding: 8px 20px;
-	margin-right: 8px;
-}
-
-.xiv-admin-filters {
-	display: flex;
-	gap: 8px;
-	align-items: center;
-	flex-wrap: wrap;
-	margin: 16px 0;
-}
-
-.xiv-admin-table img {
-	width: 48px;
-	height: 64px;
-	object-fit: cover;
-}
-
-.xiv-admin-actions a.xiv-admin-delete {
-	color: #b32d2e;
-}
-
-.xiv-admin-grid {
-	display: grid;
-	grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-	gap: 24px;
-	align-items: start;
-	max-width: 1080px;
-}
-
-@media (max-width: 782px) {
-	.xiv-admin-grid {
-		grid-template-columns: 1fr;
-	}
-}
-
-.xiv-admin-field {
-	margin-bottom: 16px;
-}
-
-.xiv-admin-field > label {
-	display: block;
-	font-weight: 600;
-	margin-bottom: 4px;
-}
-
-.xiv-admin-field input[type="text"],
-.xiv-admin-field input[type="number"],
-.xiv-admin-field textarea,
-.xiv-admin-field select {
-	width: 100%;
-	max-width: 100%;
-}
-
-.xiv-admin-row {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 12px;
-}
-
-@media (max-width: 600px) {
-	.xiv-admin-row {
-		grid-template-columns: 1fr;
-	}
-}
-
-.xiv-admin-radio {
-	display: flex;
-	gap: 24px;
-	padding: 10px 0;
-}
-
-.xiv-admin-radio label {
-	font-weight: 500;
-}
-
-.xiv-admin-note {
-	color: #6b7280;
-	font-size: 13px;
-}
-
-.xiv-admin-hidden {
-	display: none !important;
-}
-
-.xiv-size-table input {
-	width: 100%;
-}
-
-.xiv-admin-side {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
-.xiv-admin-card {
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
-	padding: 16px;
-}
-
-.xiv-admin-card h3 {
-	margin-top: 0;
-}
-
-.xiv-media-preview {
-	width: 160px;
-	height: 213px;
-	background: #f0f0f1;
-	margin-bottom: 8px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-}
-
-.xiv-media-preview img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.xiv-gallery-preview {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	margin-bottom: 8px;
-}
-
-.xiv-gallery-preview img {
-	width: 64px;
-	height: 85px;
-	object-fit: cover;
-	border: 1px solid #dcdcde;
-	cursor: pointer;
-}
-
-.xiv-admin-check {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	margin-bottom: 6px;
-}
-
-.xiv-admin-card input[type="text"] {
-	width: 100%;
-	margin-top: 8px;
-}
-
-.xiv-admin-save {
-	margin-top: 24px;
-	padding: 20px 0;
-	border-top: 1px solid #dcdcde;
-	max-width: 1080px;
+  .xiv-admin-hidden {
+    display: none !important;
+  }
 }

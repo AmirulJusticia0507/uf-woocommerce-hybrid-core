@@ -5,6 +5,7 @@
  * Menu dashboard "XIV" → Produk / Tambah Produk / Edit Produk.
  * Operasi tulis langsung ke WC_Product (simple & variable/ukuran),
  * sehingga hasilnya langsung tampil di toko.
+ * Markup memakai kelas Tailwind (build: assets/dist/css/admin.css).
  *
  * @package XIV_Apparel
  */
@@ -48,7 +49,6 @@ function xiv_admin_register_menu() {
  */
 function xiv_admin_dashboard_page() {
 	$total_products = (int) wp_count_posts( 'product' )->publish;
-	$out_of_stock   = 0;
 
 	$stock_args = array(
 		'post_type'      => 'product',
@@ -60,37 +60,39 @@ function xiv_admin_dashboard_page() {
 	);
 	$out_of_stock = count( get_posts( $stock_args ) );
 
-	$cats    = wp_count_terms( 'product_cat' );
-	$recent  = wc_get_products( array( 'limit' => 5, 'orderby' => 'date', 'order' => 'DESC' ) );
+	$cats   = wp_count_terms( 'product_cat' );
+	$recent = wc_get_products( array( 'limit' => 5, 'orderby' => 'date', 'order' => 'DESC' ) );
 	?>
-	<div class="wrap xiv-admin">
-		<h1 class="xiv-admin-title"><?php esc_html_e( 'XIV Apparel', 'xiv-apparel' ); ?></h1>
-		<p class="xiv-admin-sub"><?php esc_html_e( 'Kelola produk toko secara langsung.', 'xiv-apparel' ); ?></p>
+	<div class="wrap xiv-pb-8">
+		<h1 class="xiv-mb-1 xiv-text-[22px] xiv-font-black xiv-uppercase xiv-tracking-tight"><?php esc_html_e( 'XIV Apparel', 'xiv-apparel' ); ?></h1>
+		<p class="xiv-mt-0 xiv-text-[13px] xiv-text-xiv-gray-text"><?php esc_html_e( 'Kelola produk toko secara langsung.', 'xiv-apparel' ); ?></p>
 
-		<div class="xiv-admin-stats">
-			<div class="xiv-admin-stat">
-				<span class="xiv-admin-stat-value"><?php echo esc_html( number_format_i18n( $total_products ) ); ?></span>
-				<span class="xiv-admin-stat-label"><?php esc_html_e( 'Produk Terbit', 'xiv-apparel' ); ?></span>
+		<div class="xiv-flex xiv-flex-wrap xiv-gap-4 xiv-my-6">
+			<div class="xiv-bg-xiv-black xiv-text-xiv-bg xiv-rounded xiv-px-6 xiv-py-4 xiv-min-w-[140px]">
+				<span class="xiv-block xiv-text-[28px] xiv-font-extrabold xiv-leading-none"><?php echo esc_html( number_format_i18n( $total_products ) ); ?></span>
+				<span class="xiv-block xiv-text-[11px] xiv-uppercase xiv-tracking-widest xiv-mt-1.5 xiv-opacity-70"><?php esc_html_e( 'Produk Terbit', 'xiv-apparel' ); ?></span>
 			</div>
-			<div class="xiv-admin-stat">
-				<span class="xiv-admin-stat-value"><?php echo esc_html( number_format_i18n( $out_of_stock ) ); ?></span>
-				<span class="xiv-admin-stat-label"><?php esc_html_e( 'Habis Stok', 'xiv-apparel' ); ?></span>
+			<div class="xiv-bg-xiv-black xiv-text-xiv-bg xiv-rounded xiv-px-6 xiv-py-4 xiv-min-w-[140px]">
+				<span class="xiv-block xiv-text-[28px] xiv-font-extrabold xiv-leading-none"><?php echo esc_html( number_format_i18n( $out_of_stock ) ); ?></span>
+				<span class="xiv-block xiv-text-[11px] xiv-uppercase xiv-tracking-widest xiv-mt-1.5 xiv-opacity-70"><?php esc_html_e( 'Habis Stok', 'xiv-apparel' ); ?></span>
 			</div>
-			<div class="xiv-admin-stat">
-				<span class="xiv-admin-stat-value"><?php echo esc_html( number_format_i18n( $cats ) ); ?></span>
-				<span class="xiv-admin-stat-label"><?php esc_html_e( 'Kategori', 'xiv-apparel' ); ?></span>
+			<div class="xiv-bg-xiv-black xiv-text-xiv-bg xiv-rounded xiv-px-6 xiv-py-4 xiv-min-w-[140px]">
+				<span class="xiv-block xiv-text-[28px] xiv-font-extrabold xiv-leading-none"><?php echo esc_html( number_format_i18n( $cats ) ); ?></span>
+				<span class="xiv-block xiv-text-[11px] xiv-uppercase xiv-tracking-widest xiv-mt-1.5 xiv-opacity-70"><?php esc_html_e( 'Kategori', 'xiv-apparel' ); ?></span>
 			</div>
 		</div>
 
-		<a class="button button-primary button-hero" href="<?php echo esc_url( admin_url( 'admin.php?page=xiv-product-form' ) ); ?>">
-			<?php esc_html_e( '+ Tambah Produk', 'xiv-apparel' ); ?>
-		</a>
-		<a class="button button-hero" href="<?php echo esc_url( admin_url( 'admin.php?page=xiv-products' ) ); ?>">
-			<?php esc_html_e( 'Lihat Semua Produk', 'xiv-apparel' ); ?>
-		</a>
+		<div class="xiv-flex xiv-flex-wrap xiv-gap-2">
+			<a class="button button-primary xiv-h-auto xiv-px-5 xiv-py-2" href="<?php echo esc_url( admin_url( 'admin.php?page=xiv-product-form' ) ); ?>">
+				<?php esc_html_e( '+ Tambah Produk', 'xiv-apparel' ); ?>
+			</a>
+			<a class="button xiv-h-auto xiv-px-5 xiv-py-2" href="<?php echo esc_url( admin_url( 'admin.php?page=xiv-products' ) ); ?>">
+				<?php esc_html_e( 'Lihat Semua Produk', 'xiv-apparel' ); ?>
+			</a>
+		</div>
 
-		<h2 class="xiv-admin-section"><?php esc_html_e( 'Produk Terbaru', 'xiv-apparel' ); ?></h2>
-		<table class="widefat striped">
+		<h2 class="xiv-mt-8 xiv-mb-3 xiv-text-lg xiv-font-bold xiv-uppercase xiv-tracking-tight"><?php esc_html_e( 'Produk Terbaru', 'xiv-apparel' ); ?></h2>
+		<table class="widefat striped xiv-admin-table">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Gambar', 'xiv-apparel' ); ?></th>
@@ -125,10 +127,10 @@ function xiv_admin_dashboard_page() {
  * Halaman daftar produk.
  */
 function xiv_admin_products_list_page() {
-	$search  = sanitize_text_field( $_GET['s'] ?? '' );
-	$cat_id  = absint( $_GET['cat'] ?? 0 );
-	$paged   = max( 1, absint( $_GET['paged'] ?? 1 ) );
-	$per     = 20;
+	$search = sanitize_text_field( $_GET['s'] ?? '' );
+	$cat_id = absint( $_GET['cat'] ?? 0 );
+	$paged  = max( 1, absint( $_GET['paged'] ?? 1 ) );
+	$per    = 20;
 
 	$args = array(
 		'post_type'      => 'product',
@@ -148,14 +150,14 @@ function xiv_admin_products_list_page() {
 		) );
 	}
 
-	$query  = new WP_Query( $args );
-	$cats   = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
+	$query = new WP_Query( $args );
+	$cats  = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
 	?>
-	<div class="wrap xiv-admin">
-		<h1 class="xiv-admin-title"><?php esc_html_e( 'Produk', 'xiv-apparel' ); ?></h1>
-		<p class="xiv-admin-sub"><?php esc_html_e( 'Kelola produk WooCommerce dari sini.', 'xiv-apparel' ); ?></p>
+	<div class="wrap xiv-pb-8">
+		<h1 class="xiv-mb-1 xiv-text-[22px] xiv-font-black xiv-uppercase xiv-tracking-tight"><?php esc_html_e( 'Produk', 'xiv-apparel' ); ?></h1>
+		<p class="xiv-mt-0 xiv-text-[13px] xiv-text-xiv-gray-text"><?php esc_html_e( 'Kelola produk WooCommerce dari sini.', 'xiv-apparel' ); ?></p>
 
-		<form method="get" class="xiv-admin-filters">
+		<form method="get" class="xiv-flex xiv-flex-wrap xiv-gap-2 xiv-items-center xiv-my-4">
 			<input type="hidden" name="page" value="xiv-products" />
 			<input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Cari produk…', 'xiv-apparel' ); ?>" />
 			<select name="cat">
@@ -165,7 +167,7 @@ function xiv_admin_products_list_page() {
 				<?php endforeach; ?>
 			</select>
 			<button class="button"><?php esc_html_e( 'Filter', 'xiv-apparel' ); ?></button>
-			<a class="button button-primary" href="<?php echo esc_url( admin_url( 'admin.php?page=xiv-product-form' ) ); ?>"><?php esc_html_e( '+ Tambah Produk', 'xiv-apparel' ); ?></a>
+			<a class="button button-primary xiv-h-auto xiv-px-5 xiv-py-2" href="<?php echo esc_url( admin_url( 'admin.php?page=xiv-product-form' ) ); ?>"><?php esc_html_e( '+ Tambah Produk', 'xiv-apparel' ); ?></a>
 		</form>
 
 		<table class="widefat striped xiv-admin-table">
@@ -197,7 +199,7 @@ function xiv_admin_products_list_page() {
 						<td><?php echo wp_kses_post( $p->get_price_html() ); ?></td>
 						<td><?php echo $p->is_in_stock() ? esc_html__( 'Tersedia', 'xiv-apparel' ) : esc_html__( 'Habis', 'xiv-apparel' ); ?></td>
 						<td><?php echo esc_html( ucfirst( get_post_status_object( $p->get_status() )->label ?? $p->get_status() ) ); ?></td>
-						<td class="xiv-admin-actions">
+						<td class="xiv-whitespace-nowrap">
 							<a href="<?php echo esc_url( $edit_url ); ?>"><?php esc_html_e( 'Edit', 'xiv-apparel' ); ?></a> |
 							<a href="<?php echo esc_url( $p->get_permalink() ); ?>" target="_blank"><?php esc_html_e( 'Lihat', 'xiv-apparel' ); ?></a> |
 							<a href="<?php echo esc_url( $delete_url ); ?>" class="xiv-admin-delete" data-confirm="<?php esc_attr_e( 'Hapus produk ini?', 'xiv-apparel' ); ?>"><?php esc_html_e( 'Hapus', 'xiv-apparel' ); ?></a>
@@ -241,18 +243,18 @@ function xiv_admin_product_form_page() {
 		return;
 	}
 
-	$is_variable  = $product && $product->is_type( 'variable' );
-	$is_new       = ! $product;
-	$name         = $product ? $product->get_name() : '';
-	$short_desc   = $product ? $product->get_short_description() : '';
-	$description  = $product ? $product->get_description() : '';
-	$sku          = $product ? $product->get_sku() : '';
-	$reg_price    = $product ? $product->get_regular_price() : '';
-	$sale_price   = $product ? $product->get_sale_price() : '';
-	$image_id     = $product ? $product->get_image_id() : 0;
-	$gallery_ids  = $product ? $product->get_gallery_image_ids() : array();
-	$status       = $product ? $product->get_status() : 'publish';
-	$stock_qty    = $product ? $product->get_stock_quantity() : '';
+	$is_variable = $product && $product->is_type( 'variable' );
+	$is_new      = ! $product;
+	$name        = $product ? $product->get_name() : '';
+	$short_desc  = $product ? $product->get_short_description() : '';
+	$description = $product ? $product->get_description() : '';
+	$sku         = $product ? $product->get_sku() : '';
+	$reg_price   = $product ? $product->get_regular_price() : '';
+	$sale_price  = $product ? $product->get_sale_price() : '';
+	$image_id    = $product ? $product->get_image_id() : 0;
+	$gallery_ids = $product ? $product->get_gallery_image_ids() : array();
+	$status      = $product ? $product->get_status() : 'publish';
+	$stock_qty   = $product ? $product->get_stock_quantity() : '';
 	$product_cats = $product ? wc_get_product_term_ids( $product->get_id(), 'product_cat' ) : array();
 
 	$variations_data = array();
@@ -272,56 +274,56 @@ function xiv_admin_product_form_page() {
 
 	$all_cats = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
 	?>
-	<div class="wrap xiv-admin">
-		<h1 class="xiv-admin-title"><?php echo $is_new ? esc_html__( 'Tambah Produk', 'xiv-apparel' ) : esc_html__( 'Edit Produk', 'xiv-apparel' ); ?></h1>
+	<div class="wrap xiv-pb-8">
+		<h1 class="xiv-mb-1 xiv-text-[22px] xiv-font-black xiv-uppercase xiv-tracking-tight"><?php echo $is_new ? esc_html__( 'Tambah Produk', 'xiv-apparel' ) : esc_html__( 'Edit Produk', 'xiv-apparel' ); ?></h1>
 
-		<form method="post" class="xiv-admin-form" id="xiv-product-form">
+		<form method="post" class="xiv-max-w-[1080px]" id="xiv-product-form">
 			<?php wp_nonce_field( 'xiv_product_nonce', 'xiv_product_nonce' ); ?>
 			<input type="hidden" name="product_id" value="<?php echo esc_attr( $product_id ); ?>" />
 			<input type="hidden" name="product_image_id" id="xiv-image-id" value="<?php echo esc_attr( $image_id ); ?>" />
 			<input type="hidden" name="product_gallery_ids" id="xiv-gallery-ids" value="<?php echo esc_attr( implode( ',', $gallery_ids ) ); ?>" />
 
-			<div class="xiv-admin-grid">
-				<div class="xiv-admin-main">
+			<div class="xiv-grid xiv-gap-6 xiv-items-start xiv-grid-cols-1 lg:xiv-grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+				<div class="xiv-min-w-0">
 
-					<div class="xiv-admin-field">
-						<label for="product_name"><?php esc_html_e( 'Nama Produk *', 'xiv-apparel' ); ?></label>
-						<input type="text" id="product_name" name="product_name" required value="<?php echo esc_attr( $name ); ?>" />
+					<div class="xiv-mb-4">
+						<label for="product_name" class="xiv-block xiv-font-semibold xiv-mb-1"><?php esc_html_e( 'Nama Produk *', 'xiv-apparel' ); ?></label>
+						<input type="text" id="product_name" name="product_name" required value="<?php echo esc_attr( $name ); ?>" class="xiv-w-full" />
 					</div>
 
-					<div class="xiv-admin-field">
-						<label for="short_description"><?php esc_html_e( 'Deskripsi Singkat', 'xiv-apparel' ); ?></label>
-						<input type="text" id="short_description" name="short_description" value="<?php echo esc_attr( $short_desc ); ?>" placeholder="<?php esc_attr_e( 'mis. Cotton T Shirt', 'xiv-apparel' ); ?>" />
+					<div class="xiv-mb-4">
+						<label for="short_description" class="xiv-block xiv-font-semibold xiv-mb-1"><?php esc_html_e( 'Deskripsi Singkat', 'xiv-apparel' ); ?></label>
+						<input type="text" id="short_description" name="short_description" value="<?php echo esc_attr( $short_desc ); ?>" placeholder="<?php esc_attr_e( 'mis. Cotton T Shirt', 'xiv-apparel' ); ?>" class="xiv-w-full" />
 					</div>
 
-					<div class="xiv-admin-field">
-						<label for="description"><?php esc_html_e( 'Deskripsi Lengkap', 'xiv-apparel' ); ?></label>
-						<textarea id="description" name="description" rows="6"><?php echo esc_textarea( $description ); ?></textarea>
+					<div class="xiv-mb-4">
+						<label for="description" class="xiv-block xiv-font-semibold xiv-mb-1"><?php esc_html_e( 'Deskripsi Lengkap', 'xiv-apparel' ); ?></label>
+						<textarea id="description" name="description" rows="6" class="xiv-w-full"><?php echo esc_textarea( $description ); ?></textarea>
 					</div>
 
-					<div class="xiv-admin-field xiv-admin-row">
+					<div class="xiv-grid xiv-grid-cols-1 sm:xiv-grid-cols-3 xiv-gap-3 xiv-mb-4">
 						<div>
-							<label for="regular_price"><?php esc_html_e( 'Harga Reguler *', 'xiv-apparel' ); ?></label>
-							<input type="number" step="0.01" min="0" id="regular_price" name="regular_price" required value="<?php echo esc_attr( $reg_price ); ?>" />
+							<label for="regular_price" class="xiv-block xiv-font-semibold xiv-mb-1"><?php esc_html_e( 'Harga Reguler *', 'xiv-apparel' ); ?></label>
+							<input type="number" step="0.01" min="0" id="regular_price" name="regular_price" required value="<?php echo esc_attr( $reg_price ); ?>" class="xiv-w-full" />
 						</div>
 						<div>
-							<label for="sale_price"><?php esc_html_e( 'Harga Promo', 'xiv-apparel' ); ?></label>
-							<input type="number" step="0.01" min="0" id="sale_price" name="sale_price" value="<?php echo esc_attr( $sale_price ); ?>" />
+							<label for="sale_price" class="xiv-block xiv-font-semibold xiv-mb-1"><?php esc_html_e( 'Harga Promo', 'xiv-apparel' ); ?></label>
+							<input type="number" step="0.01" min="0" id="sale_price" name="sale_price" value="<?php echo esc_attr( $sale_price ); ?>" class="xiv-w-full" />
 						</div>
 						<div>
-							<label for="sku"><?php esc_html_e( 'SKU', 'xiv-apparel' ); ?></label>
-							<input type="text" id="sku" name="sku" value="<?php echo esc_attr( $sku ); ?>" />
+							<label for="sku" class="xiv-block xiv-font-semibold xiv-mb-1"><?php esc_html_e( 'SKU', 'xiv-apparel' ); ?></label>
+							<input type="text" id="sku" name="sku" value="<?php echo esc_attr( $sku ); ?>" class="xiv-w-full" />
 						</div>
 					</div>
 
-					<div class="xiv-admin-field">
-						<label><?php esc_html_e( 'Tipe Produk', 'xiv-apparel' ); ?></label>
-						<div class="xiv-admin-radio">
-							<label>
+					<div class="xiv-mb-4">
+						<label class="xiv-block xiv-font-semibold xiv-mb-1"><?php esc_html_e( 'Tipe Produk', 'xiv-apparel' ); ?></label>
+						<div class="xiv-flex xiv-gap-6 xiv-py-3">
+							<label class="xiv-font-medium xiv-cursor-pointer">
 								<input type="radio" name="product_type" value="simple" <?php checked( ! $is_variable ); ?> class="xiv-type-radio" data-target="simple" />
 								<?php esc_html_e( 'Simple (harga tunggal)', 'xiv-apparel' ); ?>
 							</label>
-							<label>
+							<label class="xiv-font-medium xiv-cursor-pointer">
 								<input type="radio" name="product_type" value="variable" <?php checked( $is_variable ); ?> class="xiv-type-radio" data-target="variable" />
 								<?php esc_html_e( 'Variable (ukuran XS–2X)', 'xiv-apparel' ); ?>
 							</label>
@@ -329,18 +331,18 @@ function xiv_admin_product_form_page() {
 					</div>
 
 					<!-- Simple fields -->
-					<div class="xiv-type-panel" data-panel="simple">
-						<div class="xiv-admin-field xiv-admin-row">
+					<div class="xiv-type-panel xiv-mb-4" data-panel="simple">
+						<div class="xiv-grid xiv-grid-cols-1 sm:xiv-grid-cols-3 xiv-gap-3">
 							<div>
-								<label for="stock_quantity"><?php esc_html_e( 'Jumlah Stok', 'xiv-apparel' ); ?></label>
-								<input type="number" min="0" id="stock_quantity" name="stock_quantity" value="<?php echo esc_attr( $stock_qty ); ?>" />
+								<label for="stock_quantity" class="xiv-block xiv-font-semibold xiv-mb-1"><?php esc_html_e( 'Jumlah Stok', 'xiv-apparel' ); ?></label>
+								<input type="number" min="0" id="stock_quantity" name="stock_quantity" value="<?php echo esc_attr( $stock_qty ); ?>" class="xiv-w-full" />
 							</div>
 						</div>
 					</div>
 
 					<!-- Variable fields -->
 					<div class="xiv-type-panel xiv-admin-hidden" data-panel="variable">
-						<p class="xiv-admin-note"><?php esc_html_e( 'Isi harga & stok per ukuran. Kosongkan harga jika ukuran tidak dijual.', 'xiv-apparel' ); ?></p>
+						<p class="xiv-text-[13px] xiv-text-xiv-gray-text xiv-mt-0"><?php esc_html_e( 'Isi harga & stok per ukuran. Kosongkan harga jika ukuran tidak dijual.', 'xiv-apparel' ); ?></p>
 						<table class="widefat xiv-size-table">
 							<thead>
 								<tr>
@@ -356,17 +358,17 @@ function xiv_admin_product_form_page() {
 									?>
 									<tr>
 										<td><strong><?php echo esc_html( $size ); ?></strong></td>
-										<td><input type="number" step="0.01" min="0" name="size_price[<?php echo esc_attr( $size ); ?>]" value="<?php echo esc_attr( $d['price'] ); ?>" /></td>
-										<td><input type="number" step="0.01" min="0" name="size_sale[<?php echo esc_attr( $size ); ?>]" value="<?php echo esc_attr( $d['sale'] ); ?>" /></td>
-										<td><input type="number" min="0" name="size_qty[<?php echo esc_attr( $size ); ?>]" value="<?php echo esc_attr( $d['qty'] ); ?>" /></td>
+										<td><input type="number" step="0.01" min="0" name="size_price[<?php echo esc_attr( $size ); ?>]" value="<?php echo esc_attr( $d['price'] ); ?>" class="xiv-w-full" /></td>
+										<td><input type="number" step="0.01" min="0" name="size_sale[<?php echo esc_attr( $size ); ?>]" value="<?php echo esc_attr( $d['sale'] ); ?>" class="xiv-w-full" /></td>
+										<td><input type="number" min="0" name="size_qty[<?php echo esc_attr( $size ); ?>]" value="<?php echo esc_attr( $d['qty'] ); ?>" class="xiv-w-full" /></td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
 						</table>
 					</div>
 
-					<div class="xiv-admin-field">
-						<label for="status"><?php esc_html_e( 'Status', 'xiv-apparel' ); ?></label>
+					<div class="xiv-mb-4">
+						<label for="status" class="xiv-block xiv-font-semibold xiv-mb-1"><?php esc_html_e( 'Status', 'xiv-apparel' ); ?></label>
 						<select id="status" name="status">
 							<option value="publish" <?php selected( $status, 'publish' ); ?>><?php esc_html_e( 'Terbit', 'xiv-apparel' ); ?></option>
 							<option value="draft" <?php selected( $status, 'draft' ); ?>><?php esc_html_e( 'Draft', 'xiv-apparel' ); ?></option>
@@ -374,9 +376,9 @@ function xiv_admin_product_form_page() {
 					</div>
 				</div>
 
-				<div class="xiv-admin-side">
-					<div class="xiv-admin-card">
-						<h3><?php esc_html_e( 'Gambar Produk', 'xiv-apparel' ); ?></h3>
+				<div class="xiv-space-y-4 xiv-min-w-0">
+					<div class="xiv-bg-white xiv-border xiv-border-[#dcdcde] xiv-rounded xiv-p-4">
+						<h3 class="xiv-mt-0 xiv-mb-2 xiv-font-bold"><?php esc_html_e( 'Gambar Produk', 'xiv-apparel' ); ?></h3>
 						<div class="xiv-media-preview">
 							<?php if ( $image_id ) : ?>
 								<img id="xiv-image-preview" src="<?php echo esc_url( wp_get_attachment_image_url( $image_id, 'thumbnail' ) ); ?>" alt="" />
@@ -388,8 +390,8 @@ function xiv_admin_product_form_page() {
 						<button type="button" class="button xiv-admin-hidden" id="xiv-remove-image"><?php esc_html_e( 'Hapus', 'xiv-apparel' ); ?></button>
 					</div>
 
-					<div class="xiv-admin-card">
-						<h3><?php esc_html_e( 'Galeri (opsional)', 'xiv-apparel' ); ?></h3>
+					<div class="xiv-bg-white xiv-border xiv-border-[#dcdcde] xiv-rounded xiv-p-4">
+						<h3 class="xiv-mt-0 xiv-mb-2 xiv-font-bold"><?php esc_html_e( 'Galeri (opsional)', 'xiv-apparel' ); ?></h3>
 						<div class="xiv-gallery-preview" id="xiv-gallery-preview">
 							<?php foreach ( $gallery_ids as $gid ) : ?>
 								<img src="<?php echo esc_url( wp_get_attachment_image_url( $gid, 'thumbnail' ) ); ?>" data-id="<?php echo esc_attr( $gid ); ?>" alt="" />
@@ -398,26 +400,26 @@ function xiv_admin_product_form_page() {
 						<button type="button" class="button" id="xiv-upload-gallery"><?php esc_html_e( 'Tambah Gambar', 'xiv-apparel' ); ?></button>
 					</div>
 
-					<div class="xiv-admin-card">
-						<h3><?php esc_html_e( 'Kategori', 'xiv-apparel' ); ?></h3>
+					<div class="xiv-bg-white xiv-border xiv-border-[#dcdcde] xiv-rounded xiv-p-4">
+						<h3 class="xiv-mt-0 xiv-mb-2 xiv-font-bold"><?php esc_html_e( 'Kategori', 'xiv-apparel' ); ?></h3>
 						<?php if ( ! empty( $all_cats ) && ! is_wp_error( $all_cats ) ) : ?>
 							<?php foreach ( $all_cats as $cat ) : ?>
-								<label class="xiv-admin-check">
+								<label class="xiv-flex xiv-items-center xiv-gap-2 xiv-mb-1.5 xiv-cursor-pointer">
 									<input type="checkbox" name="product_cats[]" value="<?php echo esc_attr( $cat->term_id ); ?>" <?php checked( in_array( $cat->term_id, $product_cats, true ) ); ?> />
 									<?php echo esc_html( $cat->name ); ?>
 								</label>
 							<?php endforeach; ?>
 						<?php endif; ?>
-						<input type="text" name="new_category" placeholder="<?php esc_attr_e( 'Kategori baru…', 'xiv-apparel' ); ?>" />
+						<input type="text" name="new_category" placeholder="<?php esc_attr_e( 'Kategori baru…', 'xiv-apparel' ); ?>" class="xiv-w-full xiv-mt-2" />
 					</div>
 				</div>
 			</div>
 
-			<div class="xiv-admin-save">
-				<button type="submit" name="xiv_save_product" value="1" class="button button-primary button-hero">
+			<div class="xiv-mt-6 xiv-py-5 xiv-border-t xiv-border-[#dcdcde] xiv-flex xiv-flex-wrap xiv-gap-2 xiv-items-center">
+				<button type="submit" name="xiv_save_product" value="1" class="button button-primary xiv-h-auto xiv-px-6 xiv-py-2 xiv-font-bold">
 					<?php echo $is_new ? esc_html__( 'Simpan Produk', 'xiv-apparel' ) : esc_html__( 'Perbarui Produk', 'xiv-apparel' ); ?>
 				</button>
-				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=xiv-products' ) ); ?>"><?php esc_html_e( 'Batal', 'xiv-apparel' ); ?></a>
+				<a class="button xiv-h-auto xiv-px-5 xiv-py-2" href="<?php echo esc_url( admin_url( 'admin.php?page=xiv-products' ) ); ?>"><?php esc_html_e( 'Batal', 'xiv-apparel' ); ?></a>
 			</div>
 		</form>
 	</div>
@@ -523,7 +525,7 @@ function xiv_admin_product_save() {
 			$product->set_attributes( array() );
 		}
 
-		$reg = (float) ( $_POST['regular_price'] ?? 0 );
+		$reg  = (float) ( $_POST['regular_price'] ?? 0 );
 		$sale = (float) ( $_POST['sale_price'] ?? 0 );
 
 		$product->set_regular_price( $reg > 0 ? wc_format_decimal( $reg ) : '' );
@@ -538,8 +540,7 @@ function xiv_admin_product_save() {
 	}
 
 	$edit_url = admin_url( 'admin.php?page=xiv-product-edit&product_id=' . $product->get_id() );
-	$notice   = __( 'Produk berhasil disimpan.', 'xiv-apparel' );
-	set_transient( 'xiv_admin_notice', $notice, 60 );
+	set_transient( 'xiv_admin_notice', __( 'Produk berhasil disimpan.', 'xiv-apparel' ), 60 );
 	wp_safe_redirect( $edit_url );
 	exit;
 }
@@ -619,12 +620,12 @@ function xiv_admin_ensure_size_attribute( $sizes ) {
 
 	if ( ! taxonomy_exists( 'pa_size' ) ) {
 		register_taxonomy( 'pa_size', array( 'product' ), array(
-			'label'                => __( 'Size', 'xiv-apparel' ),
-			'public'               => true,
-			'hierarchical'         => false,
-			'show_ui'              => true,
-			'show_in_rest'         => true,
-			'rewrite'              => array( 'slug' => 'size' ),
+			'label'                 => __( 'Size', 'xiv-apparel' ),
+			'public'                => true,
+			'hierarchical'          => false,
+			'show_ui'               => true,
+			'show_in_rest'          => true,
+			'rewrite'               => array( 'slug' => 'size' ),
 			'update_count_callback' => '_update_post_term_count',
 		) );
 	}
@@ -680,13 +681,13 @@ function xiv_admin_redirect_error( $message ) {
 }
 
 /**
- * Enqueue asset admin (media uploader).
+ * Enqueue asset admin (media uploader + CSS Tailwind admin).
  */
 function xiv_admin_assets( $hook ) {
 	if ( false === strpos( (string) $hook, 'xiv' ) ) {
 		return;
 	}
 	wp_enqueue_media();
-	wp_enqueue_style( 'xiv-admin', get_template_directory_uri() . '/assets/admin/css/admin.css', array(), XIV_VERSION );
+	wp_enqueue_style( 'xiv-admin', get_template_directory_uri() . '/assets/dist/css/admin.css', array(), XIV_VERSION . '.' . ( file_exists( get_template_directory() . '/assets/dist/css/admin.css' ) ? (string) filemtime( get_template_directory() . '/assets/dist/css/admin.css' ) : '0' ) );
 	wp_enqueue_script( 'xiv-admin', get_template_directory_uri() . '/assets/admin/js/admin.js', array( 'jquery', 'media-upload' ), XIV_VERSION, true );
 }
