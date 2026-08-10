@@ -1,0 +1,18 @@
+{
+  "name": "xiv-apparel-theme",
+  "version": "1.0.0",
+  "description": "XIV Apparel - Minimalist WooCommerce WordPress theme (Tailwind CSS v3 + Vanilla JS).",
+  "scripts": {
+    "dev": "tailwindcss -i ./assets/src/css/app.css -o ./assets/dist/css/app.css --watch",
+    "build": "tailwindcss -i ./assets/src/css/app.css -o ./assets/dist/css/app.css --minify",
+    "js:build": "esbuild assets/src/js/app.js assets/src/js/filters.js assets/src/js/cart.js assets/src/js/checkout.js --bundle --outdir=assets/dist/js --minify",
+    "js:dev": "esbuild assets/src/js/app.js assets/src/js/filters.js assets/src/js/cart.js assets/src/js/checkout.js --bundle --outdir=assets/dist/js --watch",
+    "dev:all": "concurrently \"npm run dev\" \"npm run js:dev\"",
+    "build:all": "npm run build && npm run js:build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "esbuild": "^0.24.0",
+    "tailwindcss": "^3.4.14"
+  }
+}

@@ -34,6 +34,7 @@ Inspired by editorial fashion UI/UX, this project features grain-texture canvas 
 | [`tables.md`](./tables.md)         | **Database**      | Custom database tables for size recommendations, stock reservations, and PostgreSQL readiness. |
 | [`forms.md`](./forms.md)           | **Forms & AJAX**  | Checkout step-form markup, AJAX add-to-cart, filter queries, and security Nonces.              |
 | [`goals.md`](./goals.md)           | **SLA & Roadmap** | Core Web Vitals SLA (LCP < 1.8s), mobile conversion roadmap, and speed benchmarks.             |
+| [`xiv-apparel-theme/`](./xiv-apparel-theme) | **Theme Code** | Implementasi penuh theme WordPress/WooCommerce (Tailwind + vanilla JS).                |
 
 ---
 
@@ -42,25 +43,60 @@ Inspired by editorial fashion UI/UX, this project features grain-texture canvas 
 - **CMS & Core Engine:** WordPress 6.x+ / WooCommerce 8.x+
 - **Backend Language:** PHP 8.2+
 - **Database:** MySQL 8.0+ / MariaDB 10.6+ *(PostgreSQL / PG4WP Ready)*
-- **Frontend Assets:** Tailwind CSS v3.x, Vanilla JavaScript (ES6+, zero jQuery dependency), Vite/Laravel Mix
+- **Frontend Assets:** Tailwind CSS v3.x, Vanilla JavaScript (ES6+, zero jQuery dependency), esbuild
 - **Icons & Graphics:** Geometric custom SVG icons (minimalist diamond logo, search glass, sleek bag, user circle)
+
+---
+
+## 📦 Theme Structure (`xiv-apparel-theme/`)
+
+```
+xiv-apparel-theme/
+├── style.css               # Theme header + fallback styles
+├── functions.php           # Bootstrap (memuat semua modul inc/)
+├── header.php / footer.php # Navbar, mobile menu, search, cart drawer
+├── front-page.php          # Home / Collection Hero (NEW THIS WEEK)
+├── index.php / page.php    # Template umum
+├── woocommerce.php         # Wrapper untuk halaman Cart/Checkout/Account
+├── woocommerce/
+│   ├── archive-product.php # PLP + sidebar filter + AJAX grid
+│   ├── single-product.php  # PDP + gallery + "Find Your Size" modal
+│   └── content-product.php # Kartu produk (rasio 3:4)
+├── inc/
+│   ├── setup.php           # Theme supports, menu, image sizes
+│   ├── enqueue.php         # Font, CSS, JS + lokalization (XIV global)
+│   ├── helpers.php         # Logo, canvas, helpers
+│   ├── woocommerce-hooks.php # Override gallery, add-to-cart, pills
+│   ├── cart.php            # AJAX add-to-cart + cart drawer fragments
+│   ├── ajax.php            # AJAX filter, size guide, newsletter
+│   └── size-guides.php     # Tabel wp_xiv_size_guides + seeder
+├── assets/
+│   ├── src/css/app.css     # Sumber Tailwind (grain texture, drawer)
+│   ├── src/js/             # app / filters / cart / checkout (vanilla JS)
+│   └── dist/               # Hasil build (di-generate)
+├── tailwind.config.js      # Prefix xiv- + design tokens
+├── postcss.config.js
+├── package.json            # Scripts dev/build via tailwind + esbuild
+└── .gitignore
+```
 
 ---
 
 ## 🚀 Quick Start for Developers
 
 ```bash
-# 1. Clone repository to WordPress themes directory
-cd wp-content/themes/
-git clone git@github.com:amirulputrajusticia/xiv-apparel-theme.git
+# 1. Copy/symlink theme ke direktori themes WordPress
+cp -r xiv-apparel-theme wp-content/themes/
 
 # 2. Install Node dependencies
-cd xiv-apparel-theme
+cd wp-content/themes/xiv-apparel-theme
 npm install
 
-# 3. Development Watcher (Hot Reloading)
-npm run dev
+# 3. Development Watcher (Hot Reloading CSS + JS)
+npm run dev:all
 
 # 4. Production Build
-npm run build
+npm run build:all
 ```
+
+> **Aktivasi theme** → Appearance › Themes › **XIV Apparel**. Tabel `wp_xiv_size_guides` + seed data dibuat otomatis saat theme diaktifkan. Pastikan WooCommerce sudah terpasang & aktif, dan set halaman Shop/Checkout/Cart/My Account.
