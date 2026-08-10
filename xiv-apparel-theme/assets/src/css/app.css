@@ -69,6 +69,28 @@
   .woocommerce ul.products li.product a {
     text-decoration: none;
   }
+
+  /* Checkout wizard */
+  .xiv-checkout-wizard {
+    scroll-margin-top: 90px;
+  }
+
+  .xiv-step-tab {
+    border: none;
+    background: none;
+  }
+
+  .xiv-checkout-wizard #customer_details.col2-set,
+  .xiv-checkout-wizard #customer_details.col2-set .col-1,
+  .xiv-checkout-wizard #customer_details.col2-set .col-2 {
+    display: block;
+    width: 100%;
+    float: none;
+  }
+
+  .xiv-step-panel .woocommerce-checkout-review-order-table {
+    width: 100%;
+  }
 }
 
 @layer utilities {

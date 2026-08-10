@@ -68,6 +68,28 @@ function xiv_enqueue_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'xiv_enqueue_assets', 20 );
 
+function xiv_enqueue_checkout_wizard() {
+	if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) {
+		return;
+	}
+
+	$dist = get_template_directory_uri() . '/assets/dist';
+	$path = get_template_directory() . '/assets/dist/js/checkout-wizard.js';
+
+	if ( ! file_exists( $path ) ) {
+		return;
+	}
+
+	wp_enqueue_script(
+		'xiv-checkout-wizard',
+		$dist . '/js/checkout-wizard.js',
+		array( 'wc-checkout', 'jquery' ),
+		XIV_VERSION . '.' . (string) filemtime( $path ),
+		true
+	);
+}
+add_action( 'wp_enqueue_scripts', 'xiv_enqueue_checkout_wizard', 25 );
+
 function xiv_inline_woo_overrides() {
 	if ( class_exists( 'WooCommerce' ) && function_exists( 'is_woocommerce' ) && is_woocommerce() ) {
 		wp_add_inline_style( 'xiv-apparel', '
