@@ -26,15 +26,15 @@ Inspired by editorial fashion UI/UX, this project features grain-texture canvas 
 
 ## 📁 Repository Documentation Matrix
 
-| File                                | Scope                   | Description                                                                                    |
-| :---------------------------------- | :---------------------- | :--------------------------------------------------------------------------------------------- |
-| [`README.md`](./README.md)         | **Overview**      | Project identity, tech stack, installation, and folder structure.                              |
-| [`guidelines.md`](./guidelines.md) | **Engineering**   | UI component rules, WooCommerce hook overrides, responsive breakpoints, and WCAG a11y.         |
-| [`styles.md`](./styles.md)         | **Design System** | Color tokens, grain background texture, typography hierarchy, and Tailwind configuration.      |
-| [`tables.md`](./tables.md)         | **Database**      | Custom database tables for size recommendations, stock reservations, and PostgreSQL readiness. |
-| [`forms.md`](./forms.md)           | **Forms & AJAX**  | Checkout step-form markup, AJAX add-to-cart, filter queries, and security Nonces.              |
-| [`goals.md`](./goals.md)           | **SLA & Roadmap** | Core Web Vitals SLA (LCP < 1.8s), mobile conversion roadmap, and speed benchmarks.             |
-| [`xiv-apparel-theme/`](./xiv-apparel-theme) | **Theme Code** | Implementasi penuh theme WordPress/WooCommerce (Tailwind + vanilla JS).                |
+| File                                         | Scope                   | Description                                                                                    |
+| :------------------------------------------- | :---------------------- | :--------------------------------------------------------------------------------------------- |
+| [`README.md`](./README.md)                  | **Overview**      | Project identity, tech stack, installation, and folder structure.                              |
+| [`guidelines.md`](./guidelines.md)          | **Engineering**   | UI component rules, WooCommerce hook overrides, responsive breakpoints, and WCAG a11y.         |
+| [`styles.md`](./styles.md)                  | **Design System** | Color tokens, grain background texture, typography hierarchy, and Tailwind configuration.      |
+| [`tables.md`](./tables.md)                  | **Database**      | Custom database tables for size recommendations, stock reservations, and PostgreSQL readiness. |
+| [`forms.md`](./forms.md)                    | **Forms & AJAX**  | Checkout step-form markup, AJAX add-to-cart, filter queries, and security Nonces.              |
+| [`goals.md`](./goals.md)                    | **SLA & Roadmap** | Core Web Vitals SLA (LCP < 1.8s), mobile conversion roadmap, and speed benchmarks.             |
+| [`xiv-apparel-theme/`](./xiv-apparel-theme) | **Theme Code**    | Implementasi penuh theme WordPress/WooCommerce (Tailwind + vanilla JS).                        |
 
 ---
 
@@ -90,6 +90,8 @@ xiv-apparel-theme/
 ```bash
 # 1. Copy/symlink theme ke direktori themes WordPress
 cp -r xiv-apparel-theme wp-content/themes/
+cd xiv-apparel-theme
+npm run dev:all
 
 # 2. Install Node dependencies
 cd wp-content/themes/xiv-apparel-theme
@@ -103,6 +105,32 @@ npm run build:all
 ```
 
 > **Aktivasi theme** → Appearance › Themes › **XIV Apparel**. Tabel `wp_xiv_size_guides` + seed data dibuat otomatis saat theme diaktifkan. Pastikan WooCommerce sudah terpasang & aktif, dan set halaman Shop/Checkout/Cart/My Account.
+
+---
+
+## 🐳 Preview di Browser (Docker Compose + WooCommerce)
+
+`docker-compose.yml` di root repo otomatis menyediakan **WordPress + MySQL + WooCommerce** dengan theme `xiv-apparel-theme` dan plugin `xiv-qris-gateway` yang sudah di-mount (editan file langsung terbaca tanpa rebuild container). Setup (install WP, aktifkan theme/plugin, seed 3 produk) berjalan otomatis lewat service `cli`.
+
+```bash
+# Start stack (pertama kali: pull image + install ~2-5 menit)
+docker compose up -d
+
+# Pantau progres setup
+docker compose logs -f cli
+```
+
+Setelah muncul **SETUP DONE**:
+
+| Halaman            | URL                                 | Login        |
+| :----------------- | :---------------------------------- | :----------- |
+| Toko (Shop)        | `http://localhost:8080`             | —            |
+| Admin WordPress    | `http://localhost:8080/wp-admin`    | `admin/admin` |
+
+Catatan:
+- Saat develop, biarkan `npm run dev:all` jalan di host — watcher menulis ke `assets/dist/` yang langsung disajikan container.
+- Jalankan perintah WP/WooCommerce kapan saja: `docker compose exec cli wp ... --user=admin`
+- Stop: `docker compose down` (data tersimpan di volume). Reset total: `docker compose down -v`.
 
 ---
 
@@ -126,6 +154,7 @@ Tersedia dua jalur QRIS:
 ### A. Plugin gateway dinamis (rekomendasi untuk produksi)
 
 Verifikasi pembayaran **otomatis** oleh provider. Install salah satu plugin:
+
 - **Midtrans WooCommerce** (metode *QRIS* tersedia)
 - **Xendit WooCommerce**
 - **Duitku** atau **Tripay**

@@ -1,0 +1,121 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_DEBUG', true );
+        define( 'WP_DEBUG_LOG', true );
+    volumes:
+      - wp_data:/var/www/html
+      - ./dev-env/plugins:/var/www/html/wp-content/plugins
+      - ./xiv-apparel-theme:/var/www/html/wp-content/themes/xiv-apparel-theme
+      - ./xiv-qris-gateway:/var/www/html/wp-content/plugins/xiv-qris-gateway
+
+  cli:
+    image: wordpress:cli
+    depends_on:
+      db:
+        condition: service_healthy
+    user: "root"
+    environment:
+      WP_CLI_ALLOW_ROOT: "1"
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    volumes:
+      - wp_data:/var/www/html
+      - ./dev-env/plugins:/var/www/html/wp-content/plugins
+      - ./xiv-apparel-theme:/var/www/html/wp-content/themes/xiv-apparel-theme
+      - ./xiv-qris-gateway:/var/www/html/wp-content/plugins/xiv-qris-gateway
+    entrypoint: sh
+    command:
+      - -c
+      - |
+        set -e
+        echo "== Generating wp-config.php =="
+        if [ ! -f /var/www/html/wp-config.php ]; then
+          wp core config \
+            --dbname=wordpress \
+            --dbuser=wordpress \
+            --dbpass=wordpress \
+            --dbhost=db:3306 \
+            --skip-check \
+            --extra-php="define( 'WP_DEBUG', true ); define( 'WP_DEBUG_LOG', true );"
+        fi
+
+        echo "== Waiting for database =="
+        until php -r '$$c=@new mysqli("db","wordpress","wordpress","wordpress",3306); exit($$c->connect_errno?1:0);' 2>/dev/null; do sleep 3; done
+
+        if ! wp core is-installed 2>/dev/null; then
+          echo "== Installing WordPress =="
+          wp core install \
+            --url="http://localhost:8080" \
+            --title="XIV Apparel" \
+            --admin_user="admin" \
+            --admin_password="admin" \
+            --admin_email="admin@example.com" \
+            --skip-email
+        fi
+
+        echo "== Installing & activating WooCommerce =="
+        wp plugin install woocommerce --activate
+
+        echo "== Activating XIV theme & QRIS plugin =="
+        wp theme activate xiv-apparel-theme
+        wp plugin activate xiv-qris-gateway
+
+        echo "== Enabling QRIS gateway by default =="
+        wp option update woocommerce_xiv_qris_settings '{"enabled":"yes","title":"QRIS","description":"Bayar dengan scan QRIS dari aplikasi e-wallet atau mobile banking.","merchant_name":"XIV Apparel","merchant_id":"","qris_image":"","instruction":"1. Buka aplikasi e-wallet / mobile banking.\n2. Pilih menu QRIS / Scan.\n3. Scan kode QR di atas.\n4. Periksa nama merchant: {merchant_name}\n5. Konfirmasi dan selesaikan pembayaran.\n\nTotal tagihan: {order_total}"}'
+
+        echo "== Pretty permalinks + cache =="
+        wp rewrite structure '/%postname%/' --hard
+        wp cache flush
+
+        echo "== Seeding sample products =="
+        if [ -z "$$(wp wc product list --user=admin --field=id --per_page=1 2>/dev/null)" ]; then
+          C_T=$$(wp wc product_cat create --user=admin --name="T-Shirts" --slug="t-shirts" --porcelain 2>/dev/null) || C_T=""
+          C_H=$$(wp wc product_cat create --user=admin --name="Hoodies" --slug="hoodies" --porcelain 2>/dev/null) || C_H=""
+          C_A=$$(wp wc product_cat create --user=admin --name="Accessories" --slug="accessories" --porcelain 2>/dev/null) || C_A=""
+          P1=$$(wp wc product create --user=admin --name="Mono Line T-Shirt" --type=simple --regular_price=149000 --description="T-shirt katun combed 30s." --manage_stock=true --stock_quantity=25 --porcelain 2>/dev/null) || P1=""
+          P2=$$(wp wc product create --user=admin --name="Heavyweight Hoodie" --type=simple --regular_price=349000 --description="Hoodie fleece 380gsm." --manage_stock=true --stock_quantity=12 --porcelain 2>/dev/null) || P2=""
+          P3=$$(wp wc product create --user=admin --name="Trucker Cap" --type=simple --regular_price=99000 --description="Cap denim adjustable." --manage_stock=true --stock_quantity=40 --porcelain 2>/dev/null) || P3=""
+          [ -n "$$P1" ] && wp wc product update "$$P1" --user=admin --categories="[{\"id\": $$C_T}]" >/dev/null 2>&1 || true
+          [ -n "$$P2" ] && wp wc product update "$$P2" --user=admin --categories="[{\"id\": $$C_H}]" >/dev/null 2>&1 || true
+          [ -n "$$P3" ] && wp wc product update "$$P3" --user=admin --categories="[{\"id\": $$C_A}]" >/dev/null 2>&1 || true
+        fi
+
+        echo "============================================"
+        echo "  SETUP DONE"
+        echo "  Store   : http://localhost:8080"
+        echo "  Admin   : http://localhost:8080/wp-admin (admin / admin)"
+        echo "============================================"
+        tail -f /dev/null
+
+volumes:
+  db_data:
+  wp_data:
