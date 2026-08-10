@@ -22,6 +22,19 @@ add_action( 'admin_menu', 'xiv_admin_register_menu' );
 add_action( 'admin_enqueue_scripts', 'xiv_admin_assets' );
 add_action( 'admin_init', 'xiv_admin_product_save' );
 add_action( 'admin_post_xiv_delete_product', 'xiv_admin_product_delete' );
+add_action( 'admin_post_xiv_upload_product_image', 'xiv_admin_upload_product_image' );
+
+/**
+ * Validasi & aturan upload foto produk.
+ */
+define( 'XIV_UPLOAD_MAX_SIZE', 5 * MB_IN_BYTES );
+define( 'XIV_UPLOAD_MIN_WIDTH', 300 );
+define( 'XIV_UPLOAD_MIN_HEIGHT', 400 );
+define( 'XIV_UPLOAD_MIMES', serialize( array(
+	'image/jpeg',
+	'image/png',
+	'image/webp',
+) ) );
 
 /**
  * Daftarkan menu admin.
@@ -277,7 +290,7 @@ function xiv_admin_product_form_page() {
 	<div class="wrap xiv-pb-8">
 		<h1 class="xiv-mb-1 xiv-text-[22px] xiv-font-black xiv-uppercase xiv-tracking-tight"><?php echo $is_new ? esc_html__( 'Tambah Produk', 'xiv-apparel' ) : esc_html__( 'Edit Produk', 'xiv-apparel' ); ?></h1>
 
-		<form method="post" class="xiv-max-w-[1080px]" id="xiv-product-form">
+		<form method="post" class="xiv-max-w-[1080px]" id="xiv-product-form" data-upload-url="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<?php wp_nonce_field( 'xiv_product_nonce', 'xiv_product_nonce' ); ?>
 			<input type="hidden" name="product_id" value="<?php echo esc_attr( $product_id ); ?>" />
 			<input type="hidden" name="product_image_id" id="xiv-image-id" value="<?php echo esc_attr( $image_id ); ?>" />
@@ -386,8 +399,13 @@ function xiv_admin_product_form_page() {
 								<img id="xiv-image-preview" src="" alt="" style="display:none;" />
 							<?php endif; ?>
 						</div>
-						<button type="button" class="button" id="xiv-upload-image"><?php esc_html_e( 'Pilih Gambar Utama', 'xiv-apparel' ); ?></button>
-						<button type="button" class="button xiv-admin-hidden" id="xiv-remove-image"><?php esc_html_e( 'Hapus', 'xiv-apparel' ); ?></button>
+						<div class="xiv-flex xiv-flex-wrap xiv-gap-2">
+							<button type="button" class="button" id="xiv-upload-image"><?php esc_html_e( 'Pilih Gambar Utama', 'xiv-apparel' ); ?></button>
+							<button type="button" class="button" id="xiv-upload-file-btn"><?php esc_html_e( 'Upload Foto', 'xiv-apparel' ); ?></button>
+							<button type="button" class="button xiv-admin-hidden" id="xiv-remove-image"><?php esc_html_e( 'Hapus', 'xiv-apparel' ); ?></button>
+						</div>
+						<input type="file" id="xiv-upload-file" accept=".jpg,.jpeg,.png,.webp" class="xiv-admin-hidden" />
+						<p class="xiv-text-[12px] xiv-text-xiv-gray-text xiv-mb-0 xiv-mt-2"><?php esc_html_e( 'JPG / PNG / WebP, maks 5MB, minimal 300×400px.', 'xiv-apparel' ); ?></p>
 					</div>
 
 					<div class="xiv-bg-white xiv-border xiv-border-[#dcdcde] xiv-rounded xiv-p-4">
@@ -397,7 +415,12 @@ function xiv_admin_product_form_page() {
 								<img src="<?php echo esc_url( wp_get_attachment_image_url( $gid, 'thumbnail' ) ); ?>" data-id="<?php echo esc_attr( $gid ); ?>" alt="" />
 							<?php endforeach; ?>
 						</div>
-						<button type="button" class="button" id="xiv-upload-gallery"><?php esc_html_e( 'Tambah Gambar', 'xiv-apparel' ); ?></button>
+						<div class="xiv-flex xiv-flex-wrap xiv-gap-2">
+							<button type="button" class="button" id="xiv-upload-gallery"><?php esc_html_e( 'Pilih dari Media', 'xiv-apparel' ); ?></button>
+							<button type="button" class="button" id="xiv-upload-files-btn"><?php esc_html_e( 'Upload Foto', 'xiv-apparel' ); ?></button>
+						</div>
+						<input type="file" id="xiv-upload-files" accept=".jpg,.jpeg,.png,.webp" multiple class="xiv-admin-hidden" />
+						<p class="xiv-text-[12px] xiv-text-xiv-gray-text xiv-mb-0 xiv-mt-2"><?php esc_html_e( 'Klik gambar pada galeri untuk menghapus. Klik "Upload Foto" bisa pilih banyak sekaligus.', 'xiv-apparel' ); ?></p>
 					</div>
 
 					<div class="xiv-bg-white xiv-border xiv-border-[#dcdcde] xiv-rounded xiv-p-4">
@@ -670,6 +693,136 @@ function xiv_admin_show_notice() {
 	}
 }
 add_action( 'admin_notices', 'xiv_admin_show_notice' );
+
+/**
+ * Validasi file upload foto produk.
+ *
+ * @param array $file Elemen $_FILES.
+ * @return true|WP_Error
+ */
+function xiv_admin_validate_upload( $file ) {
+	if ( (int) $file['size'] > XIV_UPLOAD_MAX_SIZE ) {
+		return new WP_Error( 'xiv_too_large', sprintf( __( 'File maksimal %s.', 'xiv-apparel' ), size_format( XIV_UPLOAD_MAX_SIZE ) ) );
+	}
+
+	$info = @getimagesize( $file['tmp_name'] );
+	if ( false === $info ) {
+		return new WP_Error( 'xiv_not_image', __( 'File harus berupa gambar yang valid.', 'xiv-apparel' ) );
+	}
+
+	$allowed = unserialize( XIV_UPLOAD_MIMES ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
+	if ( ! in_array( $info['mime'], $allowed, true ) ) {
+		return new WP_Error( 'xiv_bad_mime', __( 'Format tidak diizinkan: JPG, PNG, atau WebP.', 'xiv-apparel' ) );
+	}
+
+	if ( $info[0] < XIV_UPLOAD_MIN_WIDTH || $info[1] < XIV_UPLOAD_MIN_HEIGHT ) {
+		return new WP_Error( 'xiv_small', sprintf( __( 'Dimensi gambar minimal %1$s×%2$spx.', 'xiv-apparel' ), XIV_UPLOAD_MIN_WIDTH, XIV_UPLOAD_MIN_HEIGHT ) );
+	}
+
+	return true;
+}
+
+/**
+ * Arahkan upload ke wp-content/uploads/xiv-products/.
+ */
+function xiv_admin_products_upload_dir( $dirs ) {
+	$subdir = '/xiv-products' . $dirs['subdir'];
+	return array_merge( $dirs, array(
+		'path'   => $dirs['basedir'] . $subdir,
+		'url'    => $dirs['baseurl'] . $subdir,
+		'subdir' => $subdir,
+	) );
+}
+
+/**
+ * Endpoint upload foto produk (admin-post).
+ * Menerima $_FILES['file'] (tunggal) atau $_FILES['files'] (banyak).
+ */
+function xiv_admin_upload_product_image() {
+	if ( ! current_user_can( XIV_ADMIN_CAP ) || ! check_ajax_referer( 'xiv_product_nonce', '_wpnonce', false ) ) {
+		wp_send_json_error( array( 'message' => __( 'Izin ditolak.', 'xiv-apparel' ) ) );
+	}
+
+	if ( empty( $_FILES['file'] ) && empty( $_FILES['files'] ) ) {
+		wp_send_json_error( array( 'message' => __( 'File tidak ditemukan.', 'xiv-apparel' ) ) );
+	}
+
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+
+	$files = array();
+	if ( ! empty( $_FILES['files'] ) && is_array( $_FILES['files']['name'] ) ) {
+		$count = count( $_FILES['files']['name'] );
+		for ( $i = 0; $i < $count; $i++ ) {
+			if ( UPLOAD_ERR_NO_FILE === (int) $_FILES['files']['error'][ $i ] ) {
+				continue;
+			}
+			$files[] = array(
+				'name'     => sanitize_file_name( $_FILES['files']['name'][ $i ] ),
+				'type'     => $_FILES['files']['type'][ $i ],
+				'tmp_name' => $_FILES['files']['tmp_name'][ $i ],
+				'error'    => (int) $_FILES['files']['error'][ $i ],
+				'size'     => (int) $_FILES['files']['size'][ $i ],
+			);
+		}
+	} else {
+		$files[] = $_FILES['file'];
+	}
+
+	if ( empty( $files ) ) {
+		wp_send_json_error( array( 'message' => __( 'Tidak ada file yang dipilih.', 'xiv-apparel' ) ) );
+	}
+
+	$results = array();
+
+	foreach ( $files as $file ) {
+		if ( ! isset( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
+			$results[] = array( 'error' => __( 'Upload gagal diproses.', 'xiv-apparel' ) );
+			continue;
+		}
+
+		$validation = xiv_admin_validate_upload( $file );
+		if ( is_wp_error( $validation ) ) {
+			$results[] = array( 'error' => $validation->get_error_message() );
+			continue;
+		}
+
+		add_filter( 'upload_dir', 'xiv_admin_products_upload_dir' );
+		$uploaded = wp_handle_upload( $file, array(
+			'test_form' => false,
+			'mimes'     => array(
+				'jpg|jpeg|jpe' => 'image/jpeg',
+				'png'          => 'image/png',
+				'webp'         => 'image/webp',
+			),
+		) );
+		remove_filter( 'upload_dir', 'xiv_admin_products_upload_dir' );
+
+		if ( isset( $uploaded['error'] ) || ! isset( $uploaded['file'] ) ) {
+			$results[] = array( 'error' => $uploaded['error'] ?? __( 'Upload gagal.', 'xiv-apparel' ) );
+			continue;
+		}
+
+		$attach_id = wp_insert_attachment( array(
+			'post_mime_type' => $uploaded['type'],
+			'post_title'     => sanitize_file_name( pathinfo( $uploaded['file'], PATHINFO_FILENAME ) ),
+			'post_content'   => '',
+			'post_status'    => 'inherit',
+		), $uploaded['file'] );
+
+		$metadata = wp_generate_attachment_metadata( $attach_id, $uploaded['file'] );
+		wp_update_attachment_metadata( $attach_id, $metadata );
+
+		$results[] = array(
+			'attachment_id' => (int) $attach_id,
+			'url'           => wp_get_attachment_image_url( $attach_id, 'thumbnail' ),
+			'full'          => wp_get_attachment_url( $attach_id ),
+		);
+	}
+
+	wp_send_json_success( array( 'files' => $results ) );
+}
 
 /**
  * Redirect dengan pesan error (disimpan di transient).
