@@ -92,6 +92,10 @@ services:
         wp theme activate xiv-apparel-theme
         wp plugin activate xiv-qris-gateway
 
+        echo "== Switching Cart/Checkout to classic shortcode =="
+        wp post update "$$(wp option get woocommerce_cart_page_id)" --post_content="[woocommerce_cart]"
+        wp post update "$$(wp option get woocommerce_checkout_page_id)" --post_content="[woocommerce_checkout]"
+
         echo "== Enabling QRIS gateway by default =="
         wp option update woocommerce_xiv_qris_settings '{"enabled":"yes","title":"QRIS","description":"Bayar dengan scan QRIS dari aplikasi e-wallet atau mobile banking.","merchant_name":"XIV Apparel","merchant_id":"","qris_image":"","instruction":"1. Buka aplikasi e-wallet / mobile banking.\n2. Pilih menu QRIS / Scan.\n3. Scan kode QR di atas.\n4. Periksa nama merchant: {merchant_name}\n5. Konfirmasi dan selesaikan pembayaran.\n\nTotal tagihan: {order_total}"}'
 
