@@ -121,13 +121,42 @@ Dashboard WordPress → menu **XIV** menyediakan panel CRUD produk tanpa membuka
 
 Checkout wizard (INFORMATION → SHIPPING → PAYMENT) memindahkan elemen `#payment` WooCommerce asli ke step **PAYMENT**, jadi metode dari plugin gateway mana pun otomatis muncul di sana tanpa perubahan tema.
 
-WooCommerce **tidak** menyediakan QRIS bawaan — perlu plugin payment gateway yang support QRIS:
+Tersedia dua jalur QRIS:
 
-1. Install & aktifkan salah satu plugin (rekomendasi umum):
-   - **Midtrans WooCommerce** (metode *QRIS* tersedia)
-   - **Xendit WooCommerce**
-   - **Duitku** atau **Tripay**
-2. **WooCommerce → Settings → Payments** → aktifkan gateway-nya.
-3. Masukkan **Merchant ID / Server Key / API Key** dari akun merchant (gunakan mode *Sandbox* untuk testing).
-4. Aktifkan metode **QRIS** di pengaturan gateway.
-5. Test order → step **PAYMENT** menampilkan QRIS, redirect ke halaman pembayaran (QRIS dinamis, verifikasi otomatis).
+### A. Plugin gateway dinamis (rekomendasi untuk produksi)
+
+Verifikasi pembayaran **otomatis** oleh provider. Install salah satu plugin:
+- **Midtrans WooCommerce** (metode *QRIS* tersedia)
+- **Xendit WooCommerce**
+- **Duitku** atau **Tripay**
+
+Setup: **WooCommerce → Settings → Payments** → aktifkan gateway → isi **Merchant ID / Server Key / API Key** (pakai *Sandbox* untuk testing) → aktifkan metode QRIS.
+
+### B. Plugin pendamping `xiv-qris-gateway` (QRIS statis, tanpa provider)
+
+Sudah disertakan di repo: [`xiv-qris-gateway/`](./xiv-qris-gateway) — gateway WooCommerce custom dengan **QRIS statis** (kode QR di-scan, verifikasi pembayaran **manual** oleh admin).
+
+```
+xiv-qris-gateway/
+├── xiv-qris-gateway.php                 # Bootstrap + pendaftaran gateway
+├── includes/class-xiv-qris-gateway.php  # Gateway: setting, upload QR, thankyou
+└── assets/js/admin.js                   # Media library picker untuk gambar QR
+```
+
+Setup:
+
+1. Salin folder ke plugin WordPress:
+   ```bash
+   cp -r xiv-qris-gateway wp-content/plugins/
+   ```
+2. **Plugins → Installed Plugins** → aktifkan **XIV QRIS Payment Gateway**.
+3. **WooCommerce → Settings → Payments** → aktifkan **QRIS**.
+4. Isi setting:
+   - **Merchant Name** — nama yang tampil saat QR di-scan
+   - **QRIS Merchant ID (PAN)** — PAN QRIS statis dari bank/penyedia
+   - **QR Code Image** — unggah gambar QR statis via media library
+   - **Payment Instruction** — langkah bayar (bisa pakai `{merchant_name}`, `{order_total}`, `{order_id}`)
+
+Setelah aktif: metode QRIS muncul di step **PAYMENT** (dengan gambar QR), order dibuat **on-hold**, dan kartu QRIS (gambar + instruksi + total) tampil di halaman terima kasih. Admin menandai order **Completed** setelah pembayaran masuk.
+
+> Catatan: QRIS statis **tidak** ter-verifikasi otomatis. Untuk auto-confirm gunakan jalur A (Midtrans/Xendit/Duitku/Tripay).
