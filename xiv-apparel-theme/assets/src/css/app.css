@@ -297,6 +297,15 @@
   .xiv-cart-summary .shipping-calculator-button:hover {
     color: #0a0a0a;
   }
+
+  /* OTP login tabs */
+  .xiv-otp-tab {
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .xiv-otp-tab:hover:not(.xiv-otp-tab--active) {
+    color: #0a0a0a;
+  }
 }
 
 @layer utilities {

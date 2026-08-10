@@ -23,6 +23,54 @@ do_action( 'woocommerce_before_customer_login_form' );
 			<?php esc_html_e( 'Login', 'woocommerce' ); ?>
 		</h2>
 
+		<div class="xiv-otp-tabs xiv-flex xiv-border xiv-border-xiv-gray-light xiv-mb-6" role="tablist" aria-label="<?php esc_attr_e( 'Login method', 'xiv-apparel' ); ?>">
+			<button type="button" class="xiv-otp-tab xiv-otp-tab--active xiv-flex-1 xiv-bg-transparent xiv-border-0 xiv-py-3 xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-cursor-pointer xiv-text-white xiv-bg-xiv-black" data-panel="password" role="tab" aria-selected="true">
+				<?php esc_html_e( 'Password', 'xiv-apparel' ); ?>
+			</button>
+			<button type="button" class="xiv-otp-tab xiv-flex-1 xiv-bg-transparent xiv-border-0 xiv-py-3 xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-cursor-pointer xiv-text-xiv-gray-text" data-panel="otp" role="tab" aria-selected="false">
+				<?php esc_html_e( 'No. HP + OTP', 'xiv-apparel' ); ?>
+			</button>
+		</div>
+
+		<div id="xiv-otp-panel" class="xiv-otp-panel xiv-hidden">
+			<form class="xiv-otp-form woocommerce-form xiv-mb-8" method="post" novalidate>
+				<?php do_action( 'xiv_otp_form_start' ); ?>
+
+				<p class="woocommerce-form-row form-row xiv-mb-4">
+					<label for="xiv_otp_phone" class="xiv-block xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-mb-1">
+						<?php esc_html_e( 'Nomor HP (WhatsApp)', 'xiv-apparel' ); ?>
+						<span class="required" aria-hidden="true">*</span>
+					</label>
+					<input type="tel" class="woocommerce-Input input-text xiv-input" name="phone" id="xiv_otp_phone" autocomplete="tel"
+						inputmode="tel" placeholder="08xxxxxxxxxx" required aria-required="true" />
+				</p>
+
+				<div class="xiv-otp-code-row xiv-hidden xiv-mb-4">
+					<p class="woocommerce-form-row form-row xiv-mb-2">
+						<label for="xiv_otp_code" class="xiv-block xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-mb-1">
+							<?php esc_html_e( 'Kode OTP', 'xiv-apparel' ); ?>
+							<span class="required" aria-hidden="true">*</span>
+						</label>
+						<input type="text" class="woocommerce-Input input-text xiv-input xiv-otp-code" name="code" id="xiv_otp_code"
+							inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" required aria-required="true" />
+					</p>
+					<button type="submit" class="woocommerce-button button xiv-btn xiv-w-full"
+						name="verify_otp" value="1">
+						<?php esc_html_e( 'Login dengan OTP', 'xiv-apparel' ); ?>
+					</button>
+				</div>
+
+				<p class="xiv-otp-status xiv-text-xs xiv-font-mono xiv-uppercase xiv-mb-3 xiv-text-xiv-gray-text" aria-live="polite"></p>
+
+				<button type="button" class="xiv-otp-send woocommerce-button button xiv-btn xiv-btn--ghost xiv-w-full"
+					data-text="<?php esc_attr_e( 'Kirim kode', 'xiv-apparel' ); ?>">
+					<?php esc_html_e( 'Kirim kode', 'xiv-apparel' ); ?>
+				</button>
+
+				<?php do_action( 'xiv_otp_form_end' ); ?>
+			</form>
+		</div>
+
 		<form class="woocommerce-form woocommerce-form-login login xiv-mb-8" method="post" novalidate>
 
 			<?php do_action( 'woocommerce_login_form_start' ); ?>
@@ -101,6 +149,16 @@ do_action( 'woocommerce_before_customer_login_form' );
 				</label>
 				<input type="email" class="woocommerce-Input woocommerce-Input--text input-text xiv-input" name="email" id="reg_email" autocomplete="email"
 					value="<?php echo ( ! empty( $_POST['email'] ) ) ? esc_attr( wp_unslash( $_POST['email'] ) ) : ''; ?>" required aria-required="true" />
+			</p>
+
+			<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide xiv-mb-4">
+				<label for="reg_billing_phone" class="xiv-block xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-mb-1">
+					<?php esc_html_e( 'Nomor HP (WhatsApp)', 'xiv-apparel' ); ?>
+					<span class="required" aria-hidden="true">*</span>
+				</label>
+				<input type="tel" class="woocommerce-Input woocommerce-Input--text input-text xiv-input" name="billing_phone" id="reg_billing_phone"
+					autocomplete="tel" inputmode="tel" placeholder="08xxxxxxxxxx"
+					value="<?php echo ( ! empty( $_POST['billing_phone'] ) ) ? esc_attr( wp_unslash( $_POST['billing_phone'] ) ) : ''; ?>" required aria-required="true" />
 			</p>
 
 			<?php if ( 'no' === get_option( 'woocommerce_registration_generate_password' ) ) : ?>

@@ -7,8 +7,8 @@
     "build": "tailwindcss -i ./assets/src/css/app.css -o ./assets/dist/css/app.css --minify",
     "css:admin": "tailwindcss -c tailwind.admin.config.js -i ./assets/admin/css/admin.css -o ./assets/dist/css/admin.css --minify",
     "css:admin:watch": "tailwindcss -c tailwind.admin.config.js -i ./assets/admin/css/admin.css -o ./assets/dist/css/admin.css --watch",
-    "js:build": "esbuild assets/src/js/app.js assets/src/js/filters.js assets/src/js/cart.js assets/src/js/checkout.js assets/src/js/checkout-wizard.js --bundle --outdir=assets/dist/js --minify",
-    "js:dev": "esbuild assets/src/js/app.js assets/src/js/filters.js assets/src/js/cart.js assets/src/js/checkout.js assets/src/js/checkout-wizard.js --bundle --outdir=assets/dist/js --watch",
+    "js:build": "esbuild assets/src/js/app.js assets/src/js/filters.js assets/src/js/cart.js assets/src/js/checkout.js assets/src/js/checkout-wizard.js assets/src/js/otp-login.js --bundle --outdir=assets/dist/js --minify",
+    "js:dev": "esbuild assets/src/js/app.js assets/src/js/filters.js assets/src/js/cart.js assets/src/js/checkout.js assets/src/js/checkout-wizard.js assets/src/js/otp-login.js --bundle --outdir=assets/dist/js --watch",
     "dev:all": "concurrently \"npm run dev\" \"npm run js:dev\" \"npm run css:admin:watch\"",
     "build:all": "npm run build && npm run js:build && npm run css:admin"
   },

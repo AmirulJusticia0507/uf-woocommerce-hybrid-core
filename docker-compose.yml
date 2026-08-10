@@ -26,6 +26,7 @@ services:
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DEBUG: "true"
       WORDPRESS_CONFIG_EXTRA: |
         define( 'WP_DEBUG', true );
         define( 'WP_DEBUG_LOG', true );
@@ -103,6 +104,11 @@ services:
         wp option update woocommerce_enable_myaccount_registration yes
         wp option update woocommerce_enable_signup_and_login_from_checkout yes
         wp option update woocommerce_enable_checkout_login_reminder yes
+
+        echo "== Preventing HPOS enable-on-first-admin (dev env) =="
+        wp option add woocommerce_custom_order_tables_enabled no --format=plaintext
+        wp option add woocommerce_custom_orders_table_data_store posts --format=plaintext
+        wp option update woocommerce_newly_installed no
 
         echo "== Pretty permalinks + cache =="
         wp rewrite structure '/%postname%/' --hard

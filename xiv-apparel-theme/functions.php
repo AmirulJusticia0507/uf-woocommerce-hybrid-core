@@ -16,6 +16,7 @@ require get_template_directory() . '/inc/woocommerce-hooks.php';
 require get_template_directory() . '/inc/cart.php';
 require get_template_directory() . '/inc/ajax.php';
 require get_template_directory() . '/inc/size-guides.php';
+require get_template_directory() . '/inc/otp-login.php';
 
 if ( is_admin() ) {
 	require get_template_directory() . '/inc/admin-crud.php';

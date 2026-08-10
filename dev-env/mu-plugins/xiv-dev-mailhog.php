@@ -11,6 +11,13 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( function_exists( 'wp_get_environment_type' ) && 'local' === wp_get_environment_type() ) {
+	add_filter( 'wp_mail_from', function () {
+		return 'no-reply@xiv-apparel.test';
+	} );
+	add_filter( 'wp_mail_from_name', function () {
+		return 'XIV Apparel';
+	} );
+
 	add_action( 'phpmailer_init', function ( $phpmailer ) {
 		$phpmailer->isSMTP();
 		$phpmailer->Host       = 'mailhog';

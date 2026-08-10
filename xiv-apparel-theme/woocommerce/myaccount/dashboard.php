@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 $current_user = wp_get_current_user();
 $orders_count = wc_get_customer_order_count( get_current_user_id() );
-$download_count = wc_get_customer_download_count( get_current_user_id() );
+$download_count = count( wc_get_customer_available_downloads( get_current_user_id() ) );
 $edit_account = wc_get_page_permalink( 'edit-account' );
 ?>
 
