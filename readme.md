@@ -113,6 +113,10 @@ npm run build:all
 `docker-compose.yml` di root repo otomatis menyediakan **WordPress + MySQL + WooCommerce** dengan theme `xiv-apparel-theme` dan plugin `xiv-qris-gateway` yang sudah di-mount (editan file langsung terbaca tanpa rebuild container). Setup (install WP, aktifkan theme/plugin, seed 3 produk) berjalan otomatis lewat service `cli`.
 
 ```bash
+# Penting: di beberapa mesin DOCKER_HOST menunjuk ke socket podman (tidak aktif).
+# Pastikan docker memakai socket Docker asli:
+unset DOCKER_HOST
+
 # Start stack (pertama kali: pull image + install ~2-5 menit)
 docker compose up -d
 
@@ -120,7 +124,7 @@ docker compose up -d
 docker compose logs -f cli
 ```
 
-Setelah muncul **SETUP DONE**:
+Setelah muncul **SETUP DONE**, buka di browser:
 
 | Halaman            | URL                                 | Login        |
 | :----------------- | :---------------------------------- | :----------- |
