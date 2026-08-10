@@ -136,6 +136,12 @@ Catatan:
 - Jalankan perintah WP/WooCommerce kapan saja: `docker compose exec cli wp ... --user=admin`
 - Stop: `docker compose down` (data tersimpan di volume). Reset total: `docker compose down -v`.
 
+### Akun pelanggan & email dev
+
+- **Registrasi aktif**: form Login + Register di halaman **My Account** (`/my-account/`), plus opsi "create an account" saat checkout. Guest checkout tetap bisa.
+- **Halaman My Account** sudah di-custom tema (`woocommerce/myaccount/`): dashboard, daftar order, detail order, alamat, edit akun.
+- **Email dev via MailHog**: semua email WooCommerce (order on-hold, order completed, new order, reset password) dikirim ke **MailHog** → lihat di **http://localhost:8025** (SMTP `mailhog:1025`, diatur oleh `dev-env/mu-plugins/xiv-dev-mailhog.php` yang hanya aktif saat `WP_ENVIRONMENT_TYPE=local`). Di produksi pakai plugin SMTP (mis. WP Mail SMTP + SMTP provider).
+
 ---
 
 ## 🛍️ Admin Panel CRUD Produk

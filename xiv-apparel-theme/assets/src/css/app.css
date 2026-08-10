@@ -91,6 +91,102 @@
   .xiv-step-panel .woocommerce-checkout-review-order-table {
     width: 100%;
   }
+
+  /* Form controls (checkout wizard + my account) */
+  .xiv-checkout-wizard .form-row input.input-text,
+  .xiv-checkout-wizard .form-row select,
+  .xiv-checkout-wizard .form-row textarea,
+  .woocommerce form .form-row input.input-text,
+  .woocommerce form .form-row select,
+  .woocommerce form .form-row textarea {
+    width: 100%;
+    padding: 0.75rem 0.875rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #0a0a0a;
+    background-color: #fff;
+    border: 1px solid #e5e5e0;
+    border-radius: 0;
+  }
+
+  .woocommerce form .form-row input.input-text:focus,
+  .woocommerce form .form-row select:focus,
+  .woocommerce form .form-row textarea:focus {
+    outline: none;
+    border-color: #0a0a0a;
+  }
+
+  .woocommerce form .form-row .select2-container .select2-selection--single {
+    height: auto;
+    padding: 0.5rem 0.625rem;
+    border-radius: 0;
+    border-color: #e5e5e0;
+  }
+
+  .woocommerce form .form-row .select2-container .select2-selection--single .select2-selection__rendered {
+    line-height: 1.5;
+    padding: 0;
+  }
+
+  /* Buttons (my account) */
+  .xiv-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #0a0a0a;
+    border: 1px solid #0a0a0a;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    text-decoration: none;
+  }
+
+  .xiv-btn:hover {
+    background-color: #767676;
+    border-color: #767676;
+    color: #fff;
+  }
+
+  .xiv-btn--ghost {
+    color: #0a0a0a;
+    background-color: transparent;
+  }
+
+  .xiv-btn--ghost:hover {
+    color: #fff;
+  }
+
+  /* My account nav active state */
+  .xiv-myaccount .woocommerce-MyAccount-navigation li.is-active a {
+    border-color: #0a0a0a;
+    color: #0a0a0a;
+  }
+
+  .xiv-myaccount .woocommerce-form-row input.input-text,
+  .xiv-myaccount .woocommerce-form-row select,
+  .xiv-myaccount .woocommerce-form-row textarea {
+    width: 100%;
+  }
+
+  .xiv-myaccount .button,
+  .xiv-myaccount input.button {
+    width: auto;
+    background: transparent;
+    color: inherit;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: none;
+    padding: 0;
+    line-height: inherit;
+  }
 }
 
 @layer utilities {

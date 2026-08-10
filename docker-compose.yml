@@ -29,9 +29,11 @@ services:
       WORDPRESS_CONFIG_EXTRA: |
         define( 'WP_DEBUG', true );
         define( 'WP_DEBUG_LOG', true );
+        define( 'WP_ENVIRONMENT_TYPE', 'local' );
     volumes:
       - wp_data:/var/www/html
       - ./dev-env/plugins:/var/www/html/wp-content/plugins
+      - ./dev-env/mu-plugins:/var/www/html/wp-content/mu-plugins
       - ./xiv-apparel-theme:/var/www/html/wp-content/themes/xiv-apparel-theme
       - ./xiv-qris-gateway:/var/www/html/wp-content/plugins/xiv-qris-gateway
 
@@ -50,6 +52,7 @@ services:
     volumes:
       - wp_data:/var/www/html
       - ./dev-env/plugins:/var/www/html/wp-content/plugins
+      - ./dev-env/mu-plugins:/var/www/html/wp-content/mu-plugins
       - ./xiv-apparel-theme:/var/www/html/wp-content/themes/xiv-apparel-theme
       - ./xiv-qris-gateway:/var/www/html/wp-content/plugins/xiv-qris-gateway
     entrypoint: sh
@@ -65,7 +68,7 @@ services:
             --dbpass=wordpress \
             --dbhost=db:3306 \
             --skip-check \
-            --extra-php="define( 'WP_DEBUG', true ); define( 'WP_DEBUG_LOG', true );"
+            --extra-php="define( 'WP_DEBUG', true ); define( 'WP_DEBUG_LOG', true ); define( 'WP_ENVIRONMENT_TYPE', 'local' );"
         fi
 
         echo "== Waiting for database =="
@@ -92,6 +95,11 @@ services:
         echo "== Enabling QRIS gateway by default =="
         wp option update woocommerce_xiv_qris_settings '{"enabled":"yes","title":"QRIS","description":"Bayar dengan scan QRIS dari aplikasi e-wallet atau mobile banking.","merchant_name":"XIV Apparel","merchant_id":"","qris_image":"","instruction":"1. Buka aplikasi e-wallet / mobile banking.\n2. Pilih menu QRIS / Scan.\n3. Scan kode QR di atas.\n4. Periksa nama merchant: {merchant_name}\n5. Konfirmasi dan selesaikan pembayaran.\n\nTotal tagihan: {order_total}"}'
 
+        echo "== Enabling customer registration =="
+        wp option update woocommerce_enable_myaccount_registration yes
+        wp option update woocommerce_enable_signup_and_login_from_checkout yes
+        wp option update woocommerce_enable_checkout_login_reminder yes
+
         echo "== Pretty permalinks + cache =="
         wp rewrite structure '/%postname%/' --hard
         wp cache flush
@@ -115,6 +123,12 @@ services:
         echo "  Admin   : http://localhost:8080/wp-admin (admin / admin)"
         echo "============================================"
         tail -f /dev/null
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
 volumes:
   db_data:
