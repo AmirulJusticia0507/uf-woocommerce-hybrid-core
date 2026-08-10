@@ -7,6 +7,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     xivInitAddToCart(document);
     xivInitCartControls();
+    xivInitVariations();
   });
 
   function xivInitAddToCart(scope) {
@@ -25,7 +26,7 @@
     });
   }
 
-  function xivAddToCart(productId, quantity, button) {
+  function xivAddToCart(productId, quantity, button, variationId, variationAttributes) {
     if (!window.XIV) return;
 
     var body = new URLSearchParams({
@@ -34,6 +35,13 @@
       product_id: String(productId),
       quantity: String(quantity || 1)
     });
+
+    if (variationId) body.append('variation_id', String(variationId));
+    if (variationAttributes) {
+      Object.keys(variationAttributes).forEach(function (key) {
+        body.append('variation[' + key + ']', variationAttributes[key]);
+      });
+    }
 
     if (button) {
       var label = button.textContent.trim();
@@ -137,5 +145,67 @@
         xivUpdateDrawer(res.data);
       })
       .catch(function () {});
+  }
+
+  function xivInitVariations() {
+    var variations = document.querySelectorAll('.xiv-variations');
+    variations.forEach(function (wrap) {
+      var productId = wrap.getAttribute('data-product-id');
+      var options = Array.prototype.slice.call(wrap.querySelectorAll('.xiv-size-option'));
+      var priceEl = wrap.querySelector('.xiv-selected-price');
+      var addBtn = wrap.querySelector('.xiv-add-bag');
+      var jsonEl = wrap.querySelector('.xiv-variations-json');
+
+      if (!jsonEl || !addBtn) return;
+
+      var list;
+      try { list = JSON.parse(jsonEl.textContent); } catch (e) { return; }
+
+      var bySize = {};
+      list.forEach(function (v) {
+        var size = v.attributes.attribute_pa_size;
+        if (size) bySize[size] = v;
+      });
+
+      var selected = null;
+
+      function render() {
+        options.forEach(function (opt) {
+          var isActive = selected && opt.getAttribute('data-size') === selected.attributes.attribute_pa_size;
+          opt.classList.toggle('xiv-border-xiv-black', !!isActive);
+          opt.classList.toggle('xiv-bg-xiv-black', !!isActive);
+          opt.classList.toggle('xiv-text-white', !!isActive);
+        });
+
+        if (selected) {
+          if (XIV.currency) {
+            priceEl.textContent = XIV.currency + Number(selected.display_price || selected.display_regular_price || 0).toFixed(2);
+          }
+          addBtn.disabled = false;
+        } else {
+          priceEl.textContent = '';
+          addBtn.disabled = true;
+        }
+      }
+
+      options.forEach(function (opt) {
+        opt.addEventListener('click', function () {
+          var size = opt.getAttribute('data-size');
+          selected = bySize[size] || null;
+          render();
+        });
+      });
+
+      addBtn.addEventListener('click', function () {
+        if (!selected) return;
+        xivAddToCart(
+          parseInt(productId, 10),
+          1,
+          addBtn,
+          selected.variation_id,
+          { attribute_pa_size: selected.attributes.attribute_pa_size }
+        );
+      });
+    });
   }
 })();

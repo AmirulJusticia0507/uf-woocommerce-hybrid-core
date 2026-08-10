@@ -69,10 +69,12 @@ xiv-apparel-theme/
 │   ├── woocommerce-hooks.php # Override gallery, add-to-cart, pills
 │   ├── cart.php            # AJAX add-to-cart + cart drawer fragments
 │   ├── ajax.php            # AJAX filter, size guide, newsletter
-│   └── size-guides.php     # Tabel wp_xiv_size_guides + seeder
+│   ├── size-guides.php     # Tabel wp_xiv_size_guides + seeder
+│   └── admin-crud.php      # Admin panel CRUD produk (menu "XIV")
 ├── assets/
 │   ├── src/css/app.css     # Sumber Tailwind (grain texture, drawer)
 │   ├── src/js/             # app / filters / cart / checkout (vanilla JS)
+│   ├── admin/              # Asset panel admin (media uploader, CSS)
 │   └── dist/               # Hasil build (di-generate)
 ├── tailwind.config.js      # Prefix xiv- + design tokens
 ├── postcss.config.js
@@ -100,3 +102,14 @@ npm run build:all
 ```
 
 > **Aktivasi theme** → Appearance › Themes › **XIV Apparel**. Tabel `wp_xiv_size_guides` + seed data dibuat otomatis saat theme diaktifkan. Pastikan WooCommerce sudah terpasang & aktif, dan set halaman Shop/Checkout/Cart/My Account.
+
+---
+
+## 🛍️ Admin Panel CRUD Produk
+
+Dashboard WordPress → menu **XIV** menyediakan panel CRUD produk tanpa membuka WooCommerce:
+
+- **Produk** — daftar produk (cari, filter kategori, pagination, Edit/Hapus/Lihat)
+- **Tambah Produk** — nama, deskripsi, harga (reguler & promo), SKU, stok, kategori (pilih atau buat baru), gambar utama & galeri (via media library)
+- **Tipe produk:** *Simple* (harga tunggal) atau *Variable* (ukuran XS–2X dengan harga & stok per ukuran → otomatis jadi variasi WooCommerce)
+- Semua operasi memakai API resmi `WC_Product`/`WC_Product_Variation` dan nonce check, jadi hasilnya langsung tampil & bisa dibeli di toko (termasuk selector ukuran di halaman produk).

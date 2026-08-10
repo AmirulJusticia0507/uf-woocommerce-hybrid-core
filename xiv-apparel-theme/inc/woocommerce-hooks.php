@@ -67,13 +67,16 @@ add_action( 'woocommerce_single_product_summary', 'xiv_after_title', 5 );
 
 /**
  * Replace default add-to-cart for single product with sticky bag drawer trigger.
+ * Mendukung simple & variable (ukuran) product.
  */
 function xiv_single_add_to_cart() {
 	global $product;
 
 	echo '<div class="xiv-sticky-bar xiv-fixed xiv-bottom-0 xiv-inset-x-0 xiv-z-30 xiv-bg-xiv-bg xiv-border-t xiv-border-xiv-gray-light xiv-px-4 xiv-py-3 sm:xiv-static sm:xiv-p-0 sm:xiv-border-0 sm:xiv-bg-transparent">';
 
-	if ( $product->is_type( 'simple' ) && $product->is_purchasable() && $product->is_in_stock() ) {
+	if ( $product->is_type( 'variable' ) ) {
+		xiv_variable_add_to_cart( $product );
+	} elseif ( $product->is_type( 'simple' ) && $product->is_purchasable() && $product->is_in_stock() ) {
 		?>
 		<form class="cart xiv-flex xiv-gap-3" action="<?php echo esc_url( apply_filters( 'woocommerce_add_to_cart_form_action', $product->get_permalink() ) ); ?>" method="post" enctype="multipart/form-data">
 			<?php do_action( 'woocommerce_before_add_to_cart_button' ); ?>
@@ -82,10 +85,10 @@ function xiv_single_add_to_cart() {
 				echo '<input type="hidden" name="quantity" value="1" min="1" />';
 			} else {
 				woocommerce_quantity_input( array(
-					'min_value' => 1,
-					'max_value' => $product->get_max_purchase_quantity(),
+					'min_value'   => 1,
+					'max_value'   => $product->get_max_purchase_quantity(),
 					'input_value' => 1,
-					'input_name' => 'quantity',
+					'input_name'  => 'quantity',
 				) );
 			}
 			?>
@@ -105,6 +108,41 @@ function xiv_single_add_to_cart() {
 }
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
 add_action( 'woocommerce_single_product_summary', 'xiv_single_add_to_cart', 30 );
+
+/**
+ * Add-to-cart untuk variable product: selector ukuran + AJAX.
+ */
+function xiv_variable_add_to_cart( $product ) {
+	$attrs      = $product->get_variation_attributes();
+	$sizes      = ! empty( $attrs['pa_size'] ) ? $attrs['pa_size'] : array();
+	$variations = $product->get_available_variations();
+	?>
+	<div class="xiv-variations" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
+		<?php if ( ! empty( $sizes ) ) : ?>
+			<p class="xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-mb-2">
+				<?php esc_html_e( 'SELECT SIZE', 'xiv-apparel' ); ?>
+			</p>
+			<div class="xiv-flex xiv-flex-wrap xiv-gap-1.5" role="group" aria-label="<?php esc_attr_e( 'Size', 'xiv-apparel' ); ?>">
+				<?php foreach ( $sizes as $size ) : ?>
+					<button type="button" class="xiv-size-option xiv-w-9 xiv-h-9 xiv-flex xiv-items-center xiv-justify-center xiv-text-xs xiv-font-bold xiv-border xiv-border-xiv-gray-light xiv-transition hover:xiv-border-xiv-black"
+							data-size="<?php echo esc_attr( $size ); ?>"><?php echo esc_html( $size ); ?></button>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+
+		<div class="xiv-selected-price xiv-mt-4 xiv-text-lg xiv-font-black xiv-min-h-7" aria-live="polite"></div>
+
+		<button type="button" disabled
+				class="xiv-add-bag xiv-add-to-cart xiv-w-full xiv-mt-3 xiv-bg-xiv-black xiv-text-white xiv-text-sm xiv-font-bold xiv-uppercase xiv-tracking-wide xiv-py-4 xiv-px-6 xiv-transition xiv-flex xiv-items-center xiv-justify-between disabled:xiv-opacity-40 disabled:xiv-cursor-not-allowed"
+				data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
+			<span><?php esc_html_e( 'ADD TO BAG', 'xiv-apparel' ); ?></span>
+			<span aria-hidden="true">&rarr;</span>
+		</button>
+
+		<script type="application/json" class="xiv-variations-json"><?php echo wp_json_encode( $variations ); // phpcs:ignore WordPress.Security.EscapeOutput ?></script>
+	</div>
+	<?php
+}
 
 /**
  * Category pills on catalog (PLP) top.
