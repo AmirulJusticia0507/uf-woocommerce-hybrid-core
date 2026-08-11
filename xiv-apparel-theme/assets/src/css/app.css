@@ -3,6 +3,28 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color-scheme: light;
+    --xiv-bg: #f4f4f2;
+    --xiv-ink: #0a0a0a;
+    --xiv-line: #e5e5e0;
+    --xiv-muted: #767676;
+    --xiv-accent: #2541b2;
+    --xiv-surface: #ffffff;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --xiv-bg: #141413;
+      --xiv-ink: #f4f4f2;
+      --xiv-line: #33332e;
+      --xiv-muted: #9a9a90;
+      --xiv-accent: #7f96e6;
+      --xiv-surface: #1d1d1b;
+    }
+  }
+
   html {
     @apply xiv-scroll-smooth;
   }
@@ -19,7 +41,7 @@
 @layer components {
   /* Grain / noise texture overlay */
   .xiv-canvas {
-    background-color: #f4f4f2;
+    background-color: var(--xiv-bg);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   }
 
@@ -103,9 +125,9 @@
     padding: 0.75rem 0.875rem;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: #0a0a0a;
-    background-color: #fff;
-    border: 1px solid #e5e5e0;
+    color: var(--xiv-ink);
+    background-color: var(--xiv-surface);
+    border: 1px solid var(--xiv-line);
     border-radius: 0;
   }
 
@@ -113,14 +135,14 @@
   .woocommerce form .form-row select:focus,
   .woocommerce form .form-row textarea:focus {
     outline: none;
-    border-color: #0a0a0a;
+    border-color: var(--xiv-ink);
   }
 
   .woocommerce form .form-row .select2-container .select2-selection--single {
     height: auto;
     padding: 0.5rem 0.625rem;
     border-radius: 0;
-    border-color: #e5e5e0;
+    border-color: var(--xiv-line);
   }
 
   .woocommerce form .form-row .select2-container .select2-selection--single .select2-selection__rendered {
@@ -140,8 +162,8 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #fff;
-    background-color: #0a0a0a;
-    border: 1px solid #0a0a0a;
+    background-color: var(--xiv-ink);
+    border: 1px solid var(--xiv-ink);
     border-radius: 0;
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
@@ -149,13 +171,13 @@
   }
 
   .xiv-btn:hover {
-    background-color: #767676;
-    border-color: #767676;
+    background-color: var(--xiv-muted);
+    border-color: var(--xiv-muted);
     color: #fff;
   }
 
   .xiv-btn--ghost {
-    color: #0a0a0a;
+    color: var(--xiv-ink);
     background-color: transparent;
   }
 
@@ -165,8 +187,8 @@
 
   /* My account nav active state */
   .xiv-myaccount .woocommerce-MyAccount-navigation li.is-active a {
-    border-color: #0a0a0a;
-    color: #0a0a0a;
+    border-color: var(--xiv-ink);
+    color: var(--xiv-ink);
   }
 
   .xiv-myaccount .woocommerce-form-row input.input-text,
@@ -199,15 +221,15 @@
     font-size: 0.875rem;
     font-weight: 700;
     text-align: center;
-    color: #0a0a0a;
-    background-color: #fff;
-    border: 1px solid #e5e5e0;
+    color: var(--xiv-ink);
+    background-color: var(--xiv-surface);
+    border: 1px solid var(--xiv-line);
     border-radius: 0;
   }
 
   .xiv-cart .quantity input.qty:focus {
     outline: none;
-    border-color: #0a0a0a;
+    border-color: var(--xiv-ink);
   }
 
   .xiv-cart .product-name a {
@@ -233,16 +255,16 @@
     text-transform: uppercase;
     text-align: center;
     color: #fff;
-    background-color: #0a0a0a;
-    border: 1px solid #0a0a0a;
+    background-color: var(--xiv-ink);
+    border: 1px solid var(--xiv-ink);
     border-radius: 0;
     text-decoration: none;
     transition: background-color 0.15s ease, border-color 0.15s ease;
   }
 
   .xiv-cart-summary .wc-proceed-to-checkout .checkout-button:hover {
-    background-color: #767676;
-    border-color: #767676;
+    background-color: var(--xiv-muted);
+    border-color: var(--xiv-muted);
   }
 
   .xiv-cart-summary .woocommerce-shipping-calculator .shipping-calculator-form {
@@ -255,16 +277,16 @@
     width: 100%;
     padding: 0.5rem 0.625rem;
     font-size: 0.8125rem;
-    color: #0a0a0a;
-    background-color: #fff;
-    border: 1px solid #e5e5e0;
+    color: var(--xiv-ink);
+    background-color: var(--xiv-surface);
+    border: 1px solid var(--xiv-line);
     border-radius: 0;
   }
 
   .xiv-cart-summary .woocommerce-shipping-calculator .form-row input.input-text:focus,
   .xiv-cart-summary .woocommerce-shipping-calculator .form-row select:focus {
     outline: none;
-    border-color: #0a0a0a;
+    border-color: var(--xiv-ink);
   }
 
   .xiv-cart-summary .woocommerce-shipping-calculator .button {
@@ -276,8 +298,8 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #fff;
-    background-color: #0a0a0a;
-    border: 1px solid #0a0a0a;
+    background-color: var(--xiv-ink);
+    border: 1px solid var(--xiv-ink);
     border-radius: 0;
     cursor: pointer;
   }
@@ -289,13 +311,13 @@
     font-weight: 800;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #767676;
+    color: var(--xiv-muted);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
   .xiv-cart-summary .shipping-calculator-button:hover {
-    color: #0a0a0a;
+    color: var(--xiv-ink);
   }
 
   /* OTP login tabs */
@@ -304,7 +326,7 @@
   }
 
   .xiv-otp-tab:hover:not(.xiv-otp-tab--active) {
-    color: #0a0a0a;
+    color: var(--xiv-ink);
   }
 
   /* ---------- Reviews & rating ---------- */
@@ -319,7 +341,7 @@
     line-height: 1;
     font-size: 0.9em;
     letter-spacing: 0.1em;
-    color: #e5e5e0;
+    color: var(--xiv-line);
     font-family: inherit;
   }
 
@@ -342,7 +364,7 @@
   }
 
   .woocommerce .star-rating span::before {
-    color: #0a0a0a;
+    color: var(--xiv-ink);
   }
 
   .woocommerce .star-rating .rating {
@@ -360,7 +382,7 @@
     width: 2.75rem;
     height: 2.75rem;
     border-radius: 9999px;
-    background: #e5e5e0;
+    background: var(--xiv-line);
   }
 
   .woocommerce-Reviews .commentlist .comment-text {
@@ -371,7 +393,7 @@
   .woocommerce-Reviews .commentlist .comment-text p {
     margin: 0 0 0.5rem;
     font-size: 0.8125rem;
-    color: #0a0a0a;
+    color: var(--xiv-ink);
   }
 
   .woocommerce-Reviews .commentlist .comment-text .meta {
@@ -380,17 +402,17 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #767676;
+    color: var(--xiv-muted);
   }
 
   .woocommerce-Reviews .commentlist .comment-text .woocommerce-review__author {
-    color: #0a0a0a;
+    color: var(--xiv-ink);
   }
 
   .woocommerce-Reviews .commentlist .comment-text .woocommerce-review__verified {
     display: inline-block;
     margin-left: 0.5rem;
-    color: #0a0a0a;
+    color: var(--xiv-ink);
   }
 
   .woocommerce-Reviews .commentlist .description {
@@ -414,7 +436,7 @@
     font-weight: 800;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #767676;
+    color: var(--xiv-muted);
   }
 
   .woocommerce-Reviews .comment-form input[type="text"],
@@ -423,9 +445,9 @@
     width: 100%;
     padding: 0.75rem 0.875rem;
     font-size: 0.875rem;
-    color: #0a0a0a;
-    background: #fff;
-    border: 1px solid #e5e5e0;
+    color: var(--xiv-ink);
+    background: var(--xiv-surface);
+    border: 1px solid var(--xiv-line);
     border-radius: 0;
   }
 
@@ -433,16 +455,16 @@
   .woocommerce-Reviews .comment-form input[type="email"]:focus,
   .woocommerce-Reviews .comment-form textarea:focus {
     outline: none;
-    border-color: #0a0a0a;
+    border-color: var(--xiv-ink);
   }
 
   .woocommerce-Reviews .comment-form select#rating {
     width: 100%;
     padding: 0.75rem 0.875rem;
     font-size: 0.875rem;
-    color: #0a0a0a;
-    background: #fff;
-    border: 1px solid #e5e5e0;
+    color: var(--xiv-ink);
+    background: var(--xiv-surface);
+    border: 1px solid var(--xiv-line);
     border-radius: 0;
   }
 
@@ -456,8 +478,8 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #fff;
-    background: #0a0a0a;
-    border: 1px solid #0a0a0a;
+    background: var(--xiv-ink);
+    border: 1px solid var(--xiv-ink);
     border-radius: 0;
     cursor: pointer;
     transition: background-color 0.15s ease, border-color 0.15s ease;
@@ -465,8 +487,8 @@
 
   .woocommerce-Reviews .comment-form .form-submit input.submit:hover,
   .woocommerce-Reviews .comment-form input#submit:hover {
-    background: #767676;
-    border-color: #767676;
+    background: var(--xiv-muted);
+    border-color: var(--xiv-muted);
   }
 
   .woocommerce-Reviews .comment-respond .comment-reply-title small {
@@ -475,7 +497,7 @@
   }
 
   .woocommerce-Reviews .comment-respond .comment-reply-title small a {
-    color: #767676;
+    color: var(--xiv-muted);
   }
 
   /* Comment pagination (WC "list" type) */
@@ -495,14 +517,14 @@
     justify-content: center;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #0a0a0a;
-    border: 1px solid #e5e5e0;
+    color: var(--xiv-ink);
+    border: 1px solid var(--xiv-line);
     text-decoration: none;
   }
 
   .woocommerce-pagination ul li .page-numbers.current {
-    background: #0a0a0a;
-    border-color: #0a0a0a;
+    background: var(--xiv-ink);
+    border-color: var(--xiv-ink);
     color: #fff;
   }
 
@@ -516,7 +538,7 @@
   }
 
   .xiv-wishlist-toggle:hover:not(.xiv-is-active) {
-    border-color: #0a0a0a;
+    border-color: var(--xiv-ink);
   }
 
   /* Live search dropdown. */
@@ -548,5 +570,87 @@
 @layer utilities {
   .xiv-scroll-smooth {
     scroll-behavior: smooth;
+  }
+}
+
+/*
+ * Automatic dark mode (follows system prefers-color-scheme).
+ * Semantic tokens already flip via --xiv-* vars; here we invert the
+ * remaining hardcoded light-on-black patterns (solid buttons, white
+ * surfaces, selection, active pagination).
+ */
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background: #f4f4f2;
+    color: #0a0a0a;
+  }
+
+  /* Solid "black" buttons flip to light so their white text stays readable. */
+  .xiv-bg-xiv-black,
+  .hover\:xiv-bg-xiv-black:hover {
+    background-color: #f4f4f2;
+    color: #0a0a0a;
+  }
+
+  .xiv-bg-xiv-black\/85 {
+    background-color: rgb(244 244 242 / 0.85);
+    color: #0a0a0a;
+  }
+
+  .xiv-bg-xiv-black.xiv-text-white,
+  .xiv-bg-xiv-black .xiv-text-white,
+  .hover\:xiv-bg-xiv-black:hover.xiv-text-white {
+    color: #0a0a0a;
+  }
+
+  .hover\:xiv-bg-xiv-gray-text:hover {
+    background-color: #9a9a90;
+    color: #0a0a0a;
+  }
+
+  /* White surfaces become dark panels. */
+  .xiv-bg-white {
+    background-color: #1d1d1b;
+  }
+
+  .xiv-bg-white\/90 {
+    background-color: rgb(29 29 27 / 0.9);
+  }
+
+  /* Solid CSS buttons (my-account, cart summary, reviews, pagination). */
+  .xiv-btn {
+    background-color: #f4f4f2;
+    border-color: #f4f4f2;
+    color: #0a0a0a;
+  }
+
+  .xiv-btn:hover {
+    background-color: #9a9a90;
+    border-color: #9a9a90;
+    color: #0a0a0a;
+  }
+
+  .xiv-cart-summary .wc-proceed-to-checkout .checkout-button,
+  .xiv-cart-summary .woocommerce-shipping-calculator .button,
+  .woocommerce-Reviews .comment-form .form-submit input.submit,
+  .woocommerce-Reviews .comment-form input#submit {
+    background-color: #f4f4f2;
+    border-color: #f4f4f2;
+    color: #0a0a0a;
+  }
+
+  .xiv-cart-summary .wc-proceed-to-checkout .checkout-button:hover,
+  .xiv-cart-summary .woocommerce-shipping-calculator .button:hover,
+  .woocommerce-Reviews .comment-form .form-submit input.submit:hover,
+  .woocommerce-Reviews .comment-form input#submit:hover {
+    background-color: #9a9a90;
+    border-color: #9a9a90;
+    color: #0a0a0a;
+  }
+
+  .woocommerce-pagination ul li .page-numbers.current {
+    background-color: #f4f4f2;
+    border-color: #f4f4f2;
+    color: #0a0a0a;
   }
 }

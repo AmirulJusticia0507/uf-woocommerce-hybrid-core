@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   prefix: 'xiv-',
+  darkMode: 'media',
   content: [
     './**/*.php',
     '!./inc/admin-crud.php',
@@ -11,11 +12,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'xiv-bg': '#f4f4f2',
-        'xiv-black': '#0a0a0a',
-        'xiv-gray-light': '#e5e5e0',
-        'xiv-gray-text': '#767676',
-        'xiv-blue-accent': '#2541b2'
+        'xiv-bg': 'var(--xiv-bg)',
+        'xiv-black': 'var(--xiv-ink)',
+        'xiv-gray-light': 'var(--xiv-line)',
+        'xiv-gray-text': 'var(--xiv-muted)',
+        'xiv-blue-accent': 'var(--xiv-accent)'
       },
       fontFamily: {
         'display': ['"Syne"', '"Space Grotesk"', 'sans-serif'],
