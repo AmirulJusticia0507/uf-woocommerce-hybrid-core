@@ -139,8 +139,19 @@ Catatan:
 ### Akun pelanggan & email dev
 
 - **Registrasi aktif**: form Login + Register di halaman **My Account** (`/my-account/`), plus opsi "create an account" saat checkout. Guest checkout tetap bisa.
+- **Login via OTP (opsional)**: form login punya tab **Password** dan **No. HP + OTP**. OTP (6 digit, berlaku 5 menit) dikirim via email; di environment *local* kode juga tampil sebagai `dev_code` di respons AJAX. Untuk gateway WhatsApp produksi, lihat `xiv-apparel-theme/inc/otp-login.php` (filter `xiv_otp_transport` + hook `xiv_otp_send_whatsapp`).
 - **Halaman My Account** sudah di-custom tema (`woocommerce/myaccount/`): dashboard, daftar order, detail order, alamat, edit akun.
-- **Email dev via MailHog**: semua email WooCommerce (order on-hold, order completed, new order, reset password) dikirim ke **MailHog** → lihat di **http://localhost:8025** (SMTP `mailhog:1025`, diatur oleh `dev-env/mu-plugins/xiv-dev-mailhog.php` yang hanya aktif saat `WP_ENVIRONMENT_TYPE=local`). Di produksi pakai plugin SMTP (mis. WP Mail SMTP + SMTP provider).
+- **Email dev via MailHog**: semua email WooCommerce (order on-hold, order completed, new order, reset password, OTP) dikirim ke **MailHog** → lihat di **http://localhost:8025** (SMTP `mailhog:1025`, diatur oleh `dev-env/mu-plugins/xiv-dev-mailhog.php` yang hanya aktif saat `WP_ENVIRONMENT_TYPE=local`).
+
+### Email produksi via Gmail (SMTP + App Password)
+
+Di luar environment *local*, email dikirim lewat **Gmail SMTP** oleh `dev-env/mu-plugins/xiv-smtp.php`:
+
+1. Aktifkan **2-Step Verification** di akun Gmail → **Security → App passwords** → buat App Password (16 karakter).
+2. Isi credential di **wp-admin → Settings → XIV SMTP** (atau lewat konstanta `XIV_SMTP_*` di `wp-config.php`).
+3. Default host `smtp.gmail.com` port `465` (SSL). Email dikirim dari `From email` yang diisi.
+
+> Credential tersimpan di opsi WordPress — pastikan `wp-config.php` tidak ikut masuk git. Mu-plugin hanya aktif saat `WP_ENVIRONMENT_TYPE != local`, jadi di dev tetap pakai MailHog.
 
 ---
 
