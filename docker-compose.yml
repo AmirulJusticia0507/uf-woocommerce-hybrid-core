@@ -106,8 +106,8 @@ services:
         wp option update woocommerce_enable_checkout_login_reminder yes
 
         echo "== Preventing HPOS enable-on-first-admin (dev env) =="
-        wp option add woocommerce_custom_order_tables_enabled no --format=plaintext
-        wp option add woocommerce_custom_orders_table_data_store posts --format=plaintext
+        wp option update woocommerce_custom_order_tables_enabled no
+        wp option update woocommerce_custom_orders_table_data_store posts
         wp option update woocommerce_newly_installed no
 
         echo "== Pretty permalinks + cache =="

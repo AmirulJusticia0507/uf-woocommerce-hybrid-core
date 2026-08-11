@@ -112,6 +112,28 @@ function xiv_enqueue_otp_login() {
 }
 add_action( 'wp_enqueue_scripts', 'xiv_enqueue_otp_login', 26 );
 
+function xiv_enqueue_webauthn() {
+	if ( ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+		return;
+	}
+
+	$dist = get_template_directory_uri() . '/assets/dist';
+	$path = get_template_directory() . '/assets/dist/js/webauthn.js';
+
+	if ( ! file_exists( $path ) ) {
+		return;
+	}
+
+	wp_enqueue_script(
+		'xiv-webauthn',
+		$dist . '/js/webauthn.js',
+		array(),
+		XIV_VERSION . '.' . (string) filemtime( $path ),
+		true
+	);
+}
+add_action( 'wp_enqueue_scripts', 'xiv_enqueue_webauthn', 27 );
+
 function xiv_inline_woo_overrides() {
 	if ( class_exists( 'WooCommerce' ) && function_exists( 'is_woocommerce' ) && is_woocommerce() ) {
 		wp_add_inline_style( 'xiv-apparel', '

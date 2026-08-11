@@ -50,4 +50,10 @@ $edit_account = wc_get_page_permalink( 'edit-account' );
 			<?php esc_html_e( 'Logout', 'woocommerce' ); ?>
 		</a>
 	</div>
+
+	<?php
+	if ( function_exists( 'xiv_wkn_render_dashboard_section' ) ) {
+		xiv_wkn_render_dashboard_section();
+	}
+	?>
 </div>

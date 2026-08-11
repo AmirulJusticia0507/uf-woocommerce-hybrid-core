@@ -117,6 +117,20 @@ do_action( 'woocommerce_before_customer_login_form' );
 
 		</form>
 
+		<div class="xiv-wkn-login xiv-hidden xiv-mb-8">
+			<div class="xiv-flex xiv-items-center xiv-gap-3 xiv-mb-3">
+				<span class="xiv-h-px xiv-flex-1 xiv-bg-xiv-gray-light"></span>
+				<span class="xiv-text-[10px] xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-text-xiv-gray-text">
+					<?php esc_html_e( 'atau', 'xiv-apparel' ); ?>
+				</span>
+				<span class="xiv-h-px xiv-flex-1 xiv-bg-xiv-gray-light"></span>
+			</div>
+			<button type="button" class="xiv-wkn-login-btn xiv-btn xiv-btn--ghost xiv-w-full">
+				<?php esc_html_e( 'Login dengan fingerprint / Face ID', 'xiv-apparel' ); ?>
+			</button>
+			<p class="xiv-wkn-status xiv-text-xs xiv-font-mono xiv-uppercase xiv-mt-2 xiv-text-xiv-gray-text" aria-live="polite"></p>
+		</div>
+
 <?php if ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) : ?>
 
 	</div>

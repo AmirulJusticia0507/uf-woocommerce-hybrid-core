@@ -140,6 +140,12 @@ Catatan:
 
 - **Registrasi aktif**: form Login + Register di halaman **My Account** (`/my-account/`), plus opsi "create an account" saat checkout. Guest checkout tetap bisa.
 - **Login via OTP (opsional)**: form login punya tab **Password** dan **No. HP + OTP**. OTP (6 digit, berlaku 5 menit) dikirim via email; di environment *local* kode juga tampil sebagai `dev_code` di respons AJAX. Untuk gateway WhatsApp produksi, lihat `xiv-apparel-theme/inc/otp-login.php` (filter `xiv_otp_transport` + hook `xiv_otp_send_whatsapp`).
+- **Login biometrik (WebAuthn / Passkey)**: di halaman My Account ada section **Biometrik (Fingerprint / Face ID)** untuk mendaftarkan perangkat (sekali sentuh, tanpa password). Setelah terdaftar, tombol **"Login dengan fingerprint / Face ID"** muncul di form login (discoverable/resident key, tidak perlu ketik username). Detail:
+  - Server: `xiv-apparel-theme/inc/webauthn.php` (parser CBOR/COSE, verifikasi ECDSA P-256 ES256 murni PHP, tanpa dependency).
+  - Kredensial disimpan per user di user meta `xiv_webauthn_credentials` + indeks global `xiv_webauthn_index` (credential ID → user).
+  - Challenge disimpan di transient `xiv_wkn_{session}` (10 menit); kode hanya terikat ke *origin* dan *rpId* situs (hostname `home_url`).
+  - Wajib **HTTPS** (atau `localhost`) — WebAuthn hanya jalan di secure context. Di HP real gunakan tunnel HTTPS (ngrok/cloudflared) atau deploy ke server; `localhost` tidak bisa diakses dari HP orang lain.
+  - Test tanpa browser: `wp eval-file wp-content/themes/xiv-apparel-theme/tests/_webauthn-test.php --allow-root` (crypto) dan `_webauthn-e2e.php` / `_webauthn-register-e2e.php` (alur AJAX + login cookie penuh).
 - **Halaman My Account** sudah di-custom tema (`woocommerce/myaccount/`): dashboard, daftar order, detail order, alamat, edit akun.
 - **Email dev via MailHog**: semua email WooCommerce (order on-hold, order completed, new order, reset password, OTP) dikirim ke **MailHog** → lihat di **http://localhost:8025** (SMTP `mailhog:1025`, diatur oleh `dev-env/mu-plugins/xiv-dev-mailhog.php` yang hanya aktif saat `WP_ENVIRONMENT_TYPE=local`).
 
