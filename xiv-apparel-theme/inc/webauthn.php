@@ -278,7 +278,7 @@ function xiv_wkn_devices_data( $user_id ) {
 	foreach ( xiv_wkn_get_credentials( $user_id ) as $c ) {
 		$out[] = array(
 			'id'      => $c['id'],
-			'name'    => $c['name'] ? $c['name'] : __( 'Perangkat biometrik', 'xiv-apparel' ),
+			'name'    => $c['name'] ? $c['name'] : xiv_t( 'Biometric device' ),
 			'created' => gmdate( get_option( 'date_format' ), $c['created'] ),
 			'last'    => gmdate( get_option( 'date_format' ), $c['last'] ),
 		);
@@ -304,7 +304,7 @@ function xiv_wkn_check_nonce( $data ) {
 function xiv_wkn_ajax_register_options() {
 	$data = xiv_wkn_json_body();
 	if ( ! xiv_wkn_check_nonce( $data ) || ! is_user_logged_in() ) {
-		wp_send_json_error( array( 'message' => __( 'Session tidak valid.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Invalid session.' ) ) );
 	}
 	$user_id = get_current_user_id();
 	$user    = wp_get_current_user();
@@ -353,42 +353,42 @@ add_action( 'wp_ajax_xiv_wkn_register_options', 'xiv_wkn_ajax_register_options' 
 function xiv_wkn_ajax_register() {
 	$data = xiv_wkn_json_body();
 	if ( ! xiv_wkn_check_nonce( $data ) || ! is_user_logged_in() ) {
-		wp_send_json_error( array( 'message' => __( 'Session tidak valid.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Invalid session.' ) ) );
 	}
 
 	$user_id = get_current_user_id();
 	$stored  = get_transient( 'xiv_wkn_' . sanitize_key( $data['session'] ?? '' ) );
 	if ( ! $stored || 'register' !== $stored['type'] || (int) $stored['user_id'] !== $user_id ) {
-		wp_send_json_error( array( 'message' => __( 'Sesi kedaluwarsa. Coba lagi.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Session expired. Try again.' ) ) );
 	}
 	delete_transient( 'xiv_wkn_' . sanitize_key( $data['session'] ?? '' ) );
 
 	$att = xiv_wkn_parse_attestation( $data['response']['attestationObject'] ?? '' );
 	if ( ! $att || empty( $att['credential_id'] ) || empty( $att['cose_raw'] ) ) {
-		wp_send_json_error( array( 'message' => __( 'Perangkat tidak valid.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Invalid device.' ) ) );
 	}
 
 	$client_data_json = xiv_wkn_b64url_decode( $data['response']['clientDataJSON'] ?? '' );
 	$cd               = json_decode( $client_data_json, true );
 	$rp               = xiv_wkn_rp();
 	if ( ! is_array( $cd ) || 'webauthn.create' !== ( $cd['type'] ?? '' ) ) {
-		wp_send_json_error( array( 'message' => __( 'Verifikasi gagal.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Verification failed.' ) ) );
 	}
 	if ( ( $cd['origin'] ?? '' ) !== $rp['origin'] ) {
-		wp_send_json_error( array( 'message' => __( 'Origin tidak cocok.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Origin mismatch.' ) ) );
 	}
 	if ( ! hash_equals( (string) ( $cd['challenge'] ?? '' ), $stored['challenge'] ) ) {
-		wp_send_json_error( array( 'message' => __( 'Challenge tidak cocok.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Challenge mismatch.' ) ) );
 	}
 	if ( ! hash_equals( hash( 'sha256', $rp['id'], true ), $att['rp_id_hash'] ) ) {
-		wp_send_json_error( array( 'message' => __( 'Domain tidak cocok.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Domain mismatch.' ) ) );
 	}
 
 	$cred_id = xiv_wkn_b64url_encode( $att['credential_id'] );
 	$creds   = xiv_wkn_get_credentials( $user_id );
 	foreach ( $creds as $c ) {
 		if ( hash_equals( $c['id'], $cred_id ) ) {
-			wp_send_json_error( array( 'message' => __( 'Perangkat sudah terdaftar.', 'xiv-apparel' ) ) );
+			wp_send_json_error( array( 'message' => xiv_t( 'Device already registered.' ) ) );
 		}
 	}
 
@@ -404,7 +404,7 @@ function xiv_wkn_ajax_register() {
 	xiv_wkn_index_user( $cred_id, $user_id );
 
 	wp_send_json_success( array(
-		'message' => __( 'Perangkat biometrik berhasil didaftarkan.', 'xiv-apparel' ),
+		'message' => xiv_t( 'Biometric device successfully registered.' ),
 		'devices' => xiv_wkn_devices_data( $user_id ),
 	) );
 }
@@ -416,7 +416,7 @@ add_action( 'wp_ajax_xiv_wkn_register', 'xiv_wkn_ajax_register' );
 function xiv_wkn_ajax_login_options() {
 	$data = xiv_wkn_json_body();
 	if ( ! xiv_wkn_check_nonce( $data ) ) {
-		wp_send_json_error( array( 'message' => __( 'Session tidak valid.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Invalid session.' ) ) );
 	}
 	$session = xiv_wkn_new_session( 'login' );
 	$stored  = get_transient( 'xiv_wkn_' . $session );
@@ -444,19 +444,19 @@ add_action( 'wp_ajax_nopriv_xiv_wkn_login_options', 'xiv_wkn_ajax_login_options'
 function xiv_wkn_ajax_login_verify() {
 	$data = xiv_wkn_json_body();
 	if ( ! xiv_wkn_check_nonce( $data ) ) {
-		wp_send_json_error( array( 'message' => __( 'Session tidak valid.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Invalid session.' ) ) );
 	}
 
 	$stored = get_transient( 'xiv_wkn_' . sanitize_key( $data['session'] ?? '' ) );
 	if ( ! $stored || 'login' !== $stored['type'] ) {
-		wp_send_json_error( array( 'message' => __( 'Sesi kedaluwarsa. Coba lagi.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Session expired. Try again.' ) ) );
 	}
 
 	$cred_id = sanitize_text_field( $data['id'] ?? '' );
 	$index   = xiv_wkn_index();
 	$user_id = isset( $index[ $cred_id ] ) ? (int) $index[ $cred_id ] : 0;
 	if ( ! $user_id ) {
-		wp_send_json_error( array( 'message' => __( 'Perangkat tidak terdaftar.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Device not registered.' ) ) );
 	}
 
 	$creds = xiv_wkn_get_credentials( $user_id );
@@ -468,7 +468,7 @@ function xiv_wkn_ajax_login_verify() {
 		}
 	}
 	if ( ! $cred ) {
-		wp_send_json_error( array( 'message' => __( 'Perangkat tidak terdaftar.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Device not registered.' ) ) );
 	}
 
 	$client_data_json = xiv_wkn_b64url_decode( $data['response']['clientDataJSON'] ?? '' );
@@ -476,7 +476,7 @@ function xiv_wkn_ajax_login_verify() {
 	$signature        = xiv_wkn_b64url_decode( $data['response']['signature'] ?? '' );
 
 	if ( ! xiv_wkn_verify_assertion( $cred, $client_data_json, $auth_data, $signature, $stored ) ) {
-		wp_send_json_error( array( 'message' => __( 'Verifikasi gagal. Coba lagi.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Verification failed. Try again.' ) ) );
 	}
 
 	delete_transient( 'xiv_wkn_' . sanitize_key( $data['session'] ?? '' ) );
@@ -495,7 +495,7 @@ function xiv_wkn_ajax_login_verify() {
 	wp_set_auth_cookie( $user_id, true );
 
 	wp_send_json_success( array(
-		'message'  => __( 'Login berhasil.', 'xiv-apparel' ),
+		'message'  => xiv_t( 'Login successful.' ),
 		'redirect' => apply_filters( 'xiv_wkn_login_redirect', wc_get_page_permalink( 'myaccount' ), $user_id ),
 	) );
 }
@@ -507,7 +507,7 @@ add_action( 'wp_ajax_nopriv_xiv_wkn_login_verify', 'xiv_wkn_ajax_login_verify' )
 function xiv_wkn_ajax_delete() {
 	$data = xiv_wkn_json_body();
 	if ( ! xiv_wkn_check_nonce( $data ) || ! is_user_logged_in() ) {
-		wp_send_json_error( array( 'message' => __( 'Session tidak valid.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Invalid session.' ) ) );
 	}
 
 	$cred_id = sanitize_text_field( $data['id'] ?? '' );
@@ -523,7 +523,7 @@ function xiv_wkn_ajax_delete() {
 		}
 	}
 	if ( ! $found ) {
-		wp_send_json_error( array( 'message' => __( 'Perangkat tidak ditemukan.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Device not found.' ) ) );
 	}
 
 	xiv_wkn_save_credentials( $user_id, $creds );
@@ -555,14 +555,14 @@ function xiv_webauthn_localize() {
 		'loggedIn' => is_user_logged_in(),
 		'devices'  => is_user_logged_in() ? xiv_wkn_devices_data( get_current_user_id() ) : array(),
 		'i18n'     => array(
-			'registering' => __( 'MENDAFTARKAN…', 'xiv-apparel' ),
-			'registered'  => __( 'PERANGKAT TERDAFTAR', 'xiv-apparel' ),
-			'waiting'     => __( 'TUNGGU…', 'xiv-apparel' ),
-			'cancelled'   => __( 'DI BATALKAN', 'xiv-apparel' ),
-			'register'    => __( 'DAFTARKAN PERANGKAT INI', 'xiv-apparel' ),
-			'delete'      => __( 'HAPUS', 'xiv-apparel' ),
-			'confirm'     => __( 'Hapus perangkat ini?', 'xiv-apparel' ),
-			'noSupport'   => __( 'Browser/perangkat ini belum mendukung biometrik (butuh HTTPS + browser modern).', 'xiv-apparel' ),
+			'registering' => xiv_t( 'REGISTERING…' ),
+			'registered'  => xiv_t( 'DEVICE REGISTERED' ),
+			'waiting'     => xiv_t( 'WAIT…' ),
+			'cancelled'   => xiv_t( 'CANCELLED' ),
+			'register'    => xiv_t( 'REGISTER THIS DEVICE' ),
+			'delete'      => xiv_t( 'DELETE' ),
+			'confirm'     => xiv_t( 'Delete this device?' ),
+			'noSupport'   => xiv_t( 'This browser/device does not yet support biometrics (needs HTTPS + modern browser).' ),
 		),
 	) );
 }
@@ -579,18 +579,18 @@ function xiv_wkn_render_dashboard_section() {
 	?>
 	<div class="xiv-wkn-section xiv-mt-8 xiv-border-t xiv-border-xiv-gray-light xiv-pt-6">
 		<h3 class="xiv-font-display xiv-text-sm xiv-font-black xiv-uppercase xiv-tracking-widest xiv-mb-1">
-			<?php esc_html_e( 'Biometrik (Fingerprint / Face ID)', 'xiv-apparel' ); ?>
+			<?php echo esc_html( xiv_t( 'Biometrics (Fingerprint / Face ID)' ) ); ?>
 		</h3>
 		<p class="xiv-text-sm xiv-text-xiv-gray-text xiv-mb-4">
-			<?php esc_html_e( 'Login sekali sentuh tanpa password. Setiap perangkat harus didaftarkan terlebih dahulu.', 'xiv-apparel' ); ?>
+			<?php echo esc_html( xiv_t( 'One-tap login without password. Each device must be registered first.' ) ); ?>
 		</p>
 		<button type="button" class="xiv-wkn-register xiv-btn">
-			<?php esc_html_e( 'Daftarkan perangkat ini', 'xiv-apparel' ); ?>
+			<?php echo esc_html( xiv_t( 'Register this device' ) ); ?>
 		</button>
 		<ul class="xiv-wkn-devices xiv-mt-4 xiv-space-y-2 xiv-text-sm">
 			<?php if ( empty( $devices ) ) : ?>
 				<li class="xiv-wkn-devices-empty xiv-text-xiv-gray-text">
-					<?php esc_html_e( 'Belum ada perangkat terdaftar.', 'xiv-apparel' ); ?>
+					<?php echo esc_html( xiv_t( 'No devices registered yet.' ) ); ?>
 				</li>
 			<?php else : ?>
 				<?php foreach ( $devices as $d ) : ?>
@@ -601,7 +601,7 @@ function xiv_wkn_render_dashboard_section() {
 							<span class="xiv-text-xs xiv-text-xiv-gray-text xiv-block"><?php echo esc_html( $d['created'] ); ?></span>
 						</span>
 						<button type="button" class="xiv-wkn-delete xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-text-xiv-gray-text hover:xiv-text-xiv-black">
-							<?php esc_html_e( 'Hapus', 'xiv-apparel' ); ?>
+							<?php echo esc_html( xiv_t( 'DELETE' ) ); ?>
 						</button>
 					</li>
 				<?php endforeach; ?>

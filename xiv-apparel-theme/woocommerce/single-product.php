@@ -14,7 +14,7 @@ global $product;
 $product = wc_get_product();
 
 if ( ! $product ) {
-	echo '<main id="xiv-main" class="xiv-max-w-7xl xiv-mx-auto xiv-px-4 xiv-py-20"><p>' . esc_html__( 'Product not found.', 'xiv-apparel' ) . '</p></main>';
+	echo '<main id="xiv-main" class="xiv-max-w-7xl xiv-mx-auto xiv-px-4 xiv-py-20"><p>' . esc_html( xiv_t( 'Product not found.' ) ) . '</p></main>';
 	xiv_canvas_close();
 	get_footer( 'shop' );
 	return;
@@ -37,13 +37,13 @@ while ( have_posts() ) :
 				?>
 			</div>
 
-			<div class="xiv-entry-summary xiv-relative">
+			<div class="xiv-entry-summary xiv-relative lg:xiv-sticky lg:xiv-top-6 lg:xiv-self-start">
 				<?php
 				do_action( 'woocommerce_single_product_summary' );
 				?>
 				<button type="button" class="xiv-size-guide-trigger xiv-mt-4 xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-text-xiv-gray-text hover:xiv-text-xiv-black xiv-border xiv-border-xiv-gray-light xiv-px-4 xiv-py-2.5 xiv-w-full xiv-flex xiv-items-center xiv-justify-between"
 						data-category="T-Shirts">
-					<span><?php esc_html_e( 'FIND YOUR SIZE', 'xiv-apparel' ); ?></span><span aria-hidden="true">&rarr;</span>
+					<span><?php xiv_e( 'FIND YOUR SIZE' ); ?></span><span aria-hidden="true">&rarr;</span>
 				</button>
 			</div>
 		</div>
@@ -53,7 +53,7 @@ while ( have_posts() ) :
 		?>
 
 		<div class="xiv-mt-16 xiv-py-8 xiv-border-t xiv-border-xiv-gray-light">
-			<h2 class="xiv-font-display xiv-font-extrabold xiv-uppercase xiv-tracking-tighter xiv-text-2xl xiv-mb-6"><?php esc_html_e( 'YOU MAY ALSO LIKE', 'xiv-apparel' ); ?></h2>
+			<h2 class="xiv-font-display xiv-font-extrabold xiv-uppercase xiv-tracking-tighter xiv-text-2xl xiv-mb-6"><?php xiv_e( 'YOU MAY ALSO LIKE' ); ?></h2>
 			<?php
 			$related_ids = wc_get_related_products( $product->get_id(), 4 );
 			$related     = wc_get_products( array( 'include' => $related_ids, 'limit' => 4 ) );
@@ -83,8 +83,8 @@ xiv_canvas_close();
 	<div class="xiv-size-guide-overlay xiv-absolute xiv-inset-0 xiv-bg-black/40"></div>
 	<div class="xiv-relative xiv-max-w-2xl xiv-mx-auto xiv-mt-10 md:xiv-mt-24 xiv-bg-xiv-bg xiv-shadow-2xl xiv-mx-4">
 		<header class="xiv-flex xiv-items-center xiv-justify-between xiv-px-6 xiv-py-4 xiv-border-b xiv-border-xiv-gray-light">
-			<h3 class="xiv-text-sm xiv-font-black xiv-uppercase xiv-tracking-widest"><?php esc_html_e( 'MEASUREMENT GUIDE', 'xiv-apparel' ); ?></h3>
-			<button type="button" class="xiv-size-guide-close xiv-p-2 xiv-text-xiv-black" aria-label="<?php esc_attr_e( 'Close', 'xiv-apparel' ); ?>">
+			<h3 class="xiv-text-sm xiv-font-black xiv-uppercase xiv-tracking-widest"><?php xiv_e( 'MEASUREMENT GUIDE' ); ?></h3>
+			<button type="button" class="xiv-size-guide-close xiv-p-2 xiv-text-xiv-black" aria-label="<?php xiv_et( 'Close' ); ?>">
 				<svg class="xiv-w-5 xiv-h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="square"/></svg>
 			</button>
 		</header>
@@ -92,18 +92,18 @@ xiv_canvas_close();
 			<table class="xiv-w-full xiv-text-xs xiv-font-mono xiv-uppercase">
 				<thead>
 					<tr class="xiv-border-b xiv-border-xiv-black">
-						<th class="xiv-text-left xiv-py-2 xiv-pr-4"><?php esc_html_e( 'SIZE', 'xiv-apparel' ); ?></th>
-						<th class="xiv-text-left xiv-py-2 xiv-pr-4"><?php esc_html_e( 'CHEST', 'xiv-apparel' ); ?></th>
-						<th class="xiv-text-left xiv-py-2 xiv-pr-4"><?php esc_html_e( 'SHOULDER', 'xiv-apparel' ); ?></th>
-						<th class="xiv-text-left xiv-py-2 xiv-pr-4"><?php esc_html_e( 'WAIST', 'xiv-apparel' ); ?></th>
-						<th class="xiv-text-left xiv-py-2"><?php esc_html_e( 'LENGTH', 'xiv-apparel' ); ?></th>
+						<th class="xiv-text-left xiv-py-2 xiv-pr-4"><?php xiv_e( 'SIZE' ); ?></th>
+						<th class="xiv-text-left xiv-py-2 xiv-pr-4"><?php xiv_e( 'CHEST' ); ?></th>
+						<th class="xiv-text-left xiv-py-2 xiv-pr-4"><?php xiv_e( 'SHOULDER' ); ?></th>
+						<th class="xiv-text-left xiv-py-2 xiv-pr-4"><?php xiv_e( 'WAIST' ); ?></th>
+						<th class="xiv-text-left xiv-py-2"><?php xiv_e( 'LENGTH' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr><td colspan="5" class="xiv-py-8 xiv-text-center xiv-text-xiv-gray-text"><?php esc_html_e( 'LOADING…', 'xiv-apparel' ); ?></td></tr>
+					<tr><td colspan="5" class="xiv-py-8 xiv-text-center xiv-text-xiv-gray-text"><?php xiv_e( 'LOADING…' ); ?></td></tr>
 				</tbody>
 			</table>
-			<p class="xiv-text-[10px] xiv-text-xiv-gray-text xiv-mt-4"><?php esc_html_e( 'Measurements in centimetres (cm).', 'xiv-apparel' ); ?></p>
+			<p class="xiv-text-[10px] xiv-text-xiv-gray-text xiv-mt-4"><?php xiv_e( 'Measurements in centimetres (cm).' ); ?></p>
 		</div>
 	</div>
 </div>

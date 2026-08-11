@@ -33,6 +33,10 @@ function xiv_enqueue_assets() {
 		'filters'  => '/js/filters.js',
 		'cart'     => '/js/cart.js',
 		'checkout' => '/js/checkout.js',
+		'wishlist' => '/js/wishlist.js',
+		'bis'      => '/js/back-in-stock.js',
+		'quickview' => '/js/quick-view.js',
+		'compare'  => '/js/compare.js',
 	);
 
 	$handles = array();
@@ -57,12 +61,19 @@ function xiv_enqueue_assets() {
 		'cartUrl'     => function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '',
 		'nonce'       => wp_create_nonce( 'xiv_filter_nonce' ),
 		'cartNonce'   => wp_create_nonce( 'xiv_cart_nonce' ),
+		'wishlistNonce' => wp_create_nonce( 'xiv_wishlist_nonce' ),
 		'currency'    => function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '$',
 		'i18n'        => array(
-			'addToCart' => __( 'ADD TO BAG', 'xiv-apparel' ),
-			'added'     => __( 'ADDED TO BAG', 'xiv-apparel' ),
-			'loading'   => __( 'LOADING', 'xiv-apparel' ),
-			'error'     => __( 'SOMETHING WENT WRONG', 'xiv-apparel' ),
+			'addToCart' => xiv_t( 'ADD TO BAG' ),
+			'added'     => xiv_t( 'ADDED TO BAG' ),
+			'loading'   => xiv_t( 'LOADING' ),
+			'error'     => xiv_t( 'SOMETHING WENT WRONG' ),
+			'page'      => xiv_t( 'PAGE' ),
+			'of'        => xiv_t( 'OF' ),
+			'noResults' => xiv_t( 'NO MATCHES' ),
+			'viewAll'   => xiv_t( 'VIEW ALL RESULTS' ),
+			'resultsFor' => xiv_t( 'RESULTS FOR' ),
+			'soldOut'   => xiv_t( 'SOLD OUT' ),
 		),
 	) );
 }

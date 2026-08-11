@@ -5,6 +5,8 @@ module.exports = {
   corePlugins: { preflight: false },
   content: [
     './inc/admin-crud.php',
+    './inc/store-locator.php',
+    './inc/back-in-stock.php',
     './assets/admin/js/**/*.js'
   ],
   theme: {

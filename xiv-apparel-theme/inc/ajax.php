@@ -8,6 +8,70 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * AJAX live search endpoint.
+ *
+ * Accepts: term. Returns up to 6 matching products.
+ */
+function xiv_ajax_live_search() {
+	check_ajax_referer( 'xiv_filter_nonce', 'security' );
+
+	$term = sanitize_text_field( wp_unslash( $_POST['term'] ?? '' ) );
+	$term = trim( $term );
+
+	if ( '' === $term || mb_strlen( $term ) < 2 ) {
+		wp_send_json_success( array( 'results' => array(), 'count' => 0 ) );
+	}
+
+	$args = array(
+		'post_type'           => 'product',
+		'post_status'         => 'publish',
+		'posts_per_page'      => 6,
+		's'                   => $term,
+		'orderby'             => 'relevance',
+		'tax_query'           => array(
+			array(
+				'taxonomy' => 'product_visibility',
+				'field'    => 'name',
+				'terms'    => 'exclude-from-search',
+				'operator' => 'NOT IN',
+			),
+		),
+		'wc_query'            => 'search',
+	);
+
+	$query = new WP_Query( $args );
+	$out   = array();
+
+	if ( $query->have_posts() ) {
+		while ( $query->have_posts() ) {
+			$query->the_post();
+			$product = wc_get_product( $query->post );
+			if ( ! $product ) {
+				continue;
+			}
+			$out[] = array(
+				'id'     => $product->get_id(),
+				'title'  => $product->get_name(),
+				'url'    => $product->get_permalink(),
+				'image'  => wp_get_attachment_image_url( $product->get_image_id(), 'woocommerce_gallery_thumbnail' ) ? wp_get_attachment_image_url( $product->get_image_id(), 'woocommerce_gallery_thumbnail' ) : wc_placeholder_img_src( 'woocommerce_gallery_thumbnail' ),
+				'price'  => wp_strip_all_tags( $product->get_price_html() ),
+				'stock'  => $product->is_in_stock() ? 'in' : 'out',
+			);
+		}
+		wp_reset_postdata();
+	}
+
+	$total = (int) $query->found_posts;
+	if ( ! $total && count( $out ) >= 6 ) {
+		$total = 6;
+	}
+
+	wp_send_json_success( array( 'results' => $out, 'count' => $total ) );
+}
+add_action( 'wp_ajax_xiv_live_search', 'xiv_ajax_live_search' );
+add_action( 'wp_ajax_nopriv_xiv_live_search', 'xiv_ajax_live_search' );
+
+/**
  * AJAX product filter endpoint (PLP).
  *
  * Accepts: sizes[], categories[], availability, min_price, max_price, orderby, search.
@@ -123,7 +187,7 @@ function xiv_ajax_filter_products() {
 		}
 		wp_reset_postdata();
 	} else {
-		echo '<p class="xiv-col-span-full xiv-text-center xiv-text-xiv-gray-text xiv-uppercase xiv-font-mono xiv-text-sm xiv-py-20">' . esc_html__( 'NO PRODUCTS FOUND', 'xiv-apparel' ) . '</p>';
+		echo '<p class="xiv-col-span-full xiv-text-center xiv-text-xiv-gray-text xiv-uppercase xiv-font-mono xiv-text-sm xiv-py-20">' . esc_html( xiv_t( 'NO PRODUCTS FOUND' ) ) . '</p>';
 	}
 	$grid_html = ob_get_clean();
 
@@ -158,7 +222,7 @@ function xiv_ajax_size_guide() {
 
 	$category = sanitize_text_field( $_POST['category'] ?? '' );
 	if ( ! $category ) {
-		wp_send_json_error( array( 'message' => __( 'Category missing.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Category missing.' ) ) );
 	}
 
 	$guides = xiv_get_category_size_guide( $category );
@@ -177,7 +241,7 @@ function xiv_ajax_newsletter() {
 
 	$email = sanitize_email( $_POST['email'] ?? '' );
 	if ( ! is_email( $email ) ) {
-		wp_send_json_error( array( 'message' => __( 'Invalid email.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Invalid email.' ) ) );
 	}
 
 	$subs   = (array) get_option( 'xiv_newsletter_subscribers', array() );
@@ -188,7 +252,7 @@ function xiv_ajax_newsletter() {
 	);
 	update_option( 'xiv_newsletter_subscribers', array_values( array_unique( $subs, SORT_REGULAR ) ) );
 
-	wp_send_json_success( array( 'message' => __( 'Subscribed.', 'xiv-apparel' ) ) );
+	wp_send_json_success( array( 'message' => xiv_t( 'Subscribed.' ) ) );
 }
 add_action( 'wp_ajax_xiv_newsletter', 'xiv_ajax_newsletter' );
 add_action( 'wp_ajax_nopriv_xiv_newsletter', 'xiv_ajax_newsletter' );

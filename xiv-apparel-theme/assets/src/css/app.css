@@ -306,6 +306,243 @@
   .xiv-otp-tab:hover:not(.xiv-otp-tab--active) {
     color: #0a0a0a;
   }
+
+  /* ---------- Reviews & rating ---------- */
+
+  /* Display stars (WC markup: .star-rating > span[style=width]) */
+  .woocommerce .star-rating {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    width: 5.4em;
+    height: 1em;
+    line-height: 1;
+    font-size: 0.9em;
+    letter-spacing: 0.1em;
+    color: #e5e5e0;
+    font-family: inherit;
+  }
+
+  .woocommerce .star-rating::before,
+  .woocommerce .star-rating span::before {
+    content: "\2605\2605\2605\2605\2605";
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .woocommerce .star-rating span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    height: 1em;
+    white-space: nowrap;
+    color: transparent;
+  }
+
+  .woocommerce .star-rating span::before {
+    color: #0a0a0a;
+  }
+
+  .woocommerce .star-rating .rating {
+    display: none;
+  }
+
+  /* Review list */
+  .woocommerce-Reviews .commentlist .comment_container {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .woocommerce-Reviews .commentlist .avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    background: #e5e5e0;
+  }
+
+  .woocommerce-Reviews .commentlist .comment-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .woocommerce-Reviews .commentlist .comment-text p {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    color: #0a0a0a;
+  }
+
+  .woocommerce-Reviews .commentlist .comment-text .meta {
+    margin: 0.25rem 0 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #767676;
+  }
+
+  .woocommerce-Reviews .commentlist .comment-text .woocommerce-review__author {
+    color: #0a0a0a;
+  }
+
+  .woocommerce-Reviews .commentlist .comment-text .woocommerce-review__verified {
+    display: inline-block;
+    margin-left: 0.5rem;
+    color: #0a0a0a;
+  }
+
+  .woocommerce-Reviews .commentlist .description {
+    margin-top: 0.5rem;
+  }
+
+  /* Review form */
+  .woocommerce-Reviews .comment-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .woocommerce-Reviews .comment-form > p {
+    margin: 0;
+  }
+
+  .woocommerce-Reviews .comment-form label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #767676;
+  }
+
+  .woocommerce-Reviews .comment-form input[type="text"],
+  .woocommerce-Reviews .comment-form input[type="email"],
+  .woocommerce-Reviews .comment-form textarea {
+    width: 100%;
+    padding: 0.75rem 0.875rem;
+    font-size: 0.875rem;
+    color: #0a0a0a;
+    background: #fff;
+    border: 1px solid #e5e5e0;
+    border-radius: 0;
+  }
+
+  .woocommerce-Reviews .comment-form input[type="text"]:focus,
+  .woocommerce-Reviews .comment-form input[type="email"]:focus,
+  .woocommerce-Reviews .comment-form textarea:focus {
+    outline: none;
+    border-color: #0a0a0a;
+  }
+
+  .woocommerce-Reviews .comment-form select#rating {
+    width: 100%;
+    padding: 0.75rem 0.875rem;
+    font-size: 0.875rem;
+    color: #0a0a0a;
+    background: #fff;
+    border: 1px solid #e5e5e0;
+    border-radius: 0;
+  }
+
+  .woocommerce-Reviews .comment-form .form-submit input.submit,
+  .woocommerce-Reviews .comment-form input#submit {
+    display: inline-block;
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+    background: #0a0a0a;
+    border: 1px solid #0a0a0a;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .woocommerce-Reviews .comment-form .form-submit input.submit:hover,
+  .woocommerce-Reviews .comment-form input#submit:hover {
+    background: #767676;
+    border-color: #767676;
+  }
+
+  .woocommerce-Reviews .comment-respond .comment-reply-title small {
+    margin-left: 0.5rem;
+    font-size: 0.6875rem;
+  }
+
+  .woocommerce-Reviews .comment-respond .comment-reply-title small a {
+    color: #767676;
+  }
+
+  /* Comment pagination (WC "list" type) */
+  .woocommerce-pagination ul {
+    display: inline-flex;
+    gap: 0.375rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .woocommerce-pagination ul li .page-numbers {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    border: 1px solid #e5e5e0;
+    text-decoration: none;
+  }
+
+  .woocommerce-pagination ul li .page-numbers.current {
+    background: #0a0a0a;
+    border-color: #0a0a0a;
+    color: #fff;
+  }
+
+  /* ---------- Wishlist ---------- */
+  .xiv-wishlist-toggle.xiv-is-active svg {
+    fill: currentColor;
+  }
+
+  .xiv-wishlist-toggle {
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .xiv-wishlist-toggle:hover:not(.xiv-is-active) {
+    border-color: #0a0a0a;
+  }
+
+  /* Live search dropdown. */
+  #xiv-live-search-results {
+    position: relative;
+  }
+
+  .xiv-live-search-empty {
+    padding-left: 0.25rem;
+  }
+
+  /* Newsletter popup. */
+  #xiv-newsletter-popup > div {
+    animation: xiv-popup-in 0.3s ease both;
+  }
+
+  @keyframes xiv-popup-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 @layer utilities {

@@ -92,19 +92,19 @@ function xiv_otp_ajax_send() {
 
 	$phone = xiv_otp_normalize_phone( sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) ) );
 	if ( strlen( $phone ) < 9 ) {
-		wp_send_json_error( array( 'message' => __( 'Nomor HP tidak valid.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Invalid phone number.' ) ) );
 	}
 
 	$user = xiv_otp_find_user_by_phone( $phone );
 	if ( ! $user ) {
-		wp_send_json_error( array( 'message' => __( 'Nomor HP tidak terdaftar. Silakan register terlebih dahulu.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Phone number not registered. Please register first.' ) ) );
 	}
 
 	$transient_key = 'xiv_otp_' . md5( $phone );
 	$existing      = get_transient( $transient_key );
 
 	if ( $existing && ! empty( $existing['sent_at'] ) && ( time() - (int) $existing['sent_at'] ) < 60 ) {
-		wp_send_json_error( array( 'message' => __( 'Kode sudah dikirim. Coba lagi dalam 1 menit.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Code already sent. Try again in 1 minute.' ) ) );
 	}
 
 	$code = (string) wp_rand( 100000, 999999 );
@@ -120,7 +120,7 @@ function xiv_otp_ajax_send() {
 	xiv_otp_send_code( $user->ID, $phone, $code );
 
 	$response = array(
-		'message' => __( 'Kode OTP terkirim.', 'xiv-apparel' ),
+		'message' => xiv_t( 'OTP code sent.' ),
 		'phone'   => $phone,
 	);
 
@@ -144,30 +144,30 @@ function xiv_otp_ajax_verify() {
 	$code  = preg_replace( '/\D+/', '', sanitize_text_field( wp_unslash( $_POST['code'] ?? '' ) ) );
 
 	if ( strlen( $phone ) < 9 || ! $code ) {
-		wp_send_json_error( array( 'message' => __( 'Nomor HP atau kode tidak valid.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Invalid phone number or code.' ) ) );
 	}
 
 	$transient_key = 'xiv_otp_' . md5( $phone );
 	$data          = get_transient( $transient_key );
 
 	if ( ! $data || empty( $data['user_id'] ) || empty( $data['hash'] ) ) {
-		wp_send_json_error( array( 'message' => __( 'Kode tidak ditemukan. Kirim ulang kode.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Code not found. Resend code.' ) ) );
 	}
 
 	if ( time() > (int) $data['expires'] ) {
 		delete_transient( $transient_key );
-		wp_send_json_error( array( 'message' => __( 'Kode kedaluwarsa. Kirim ulang kode.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Code expired. Resend code.' ) ) );
 	}
 
 	if ( (int) $data['attempts'] >= 5 ) {
 		delete_transient( $transient_key );
-		wp_send_json_error( array( 'message' => __( 'Terlalu banyak percobaan. Kirim ulang kode.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Too many attempts. Resend code.' ) ) );
 	}
 
 	if ( ! hash_equals( $data['hash'], wp_hash( $phone . '|' . $code ) ) ) {
 		$data['attempts'] = (int) $data['attempts'] + 1;
 		set_transient( $transient_key, $data, $data['expires'] - time() );
-		wp_send_json_error( array( 'message' => __( 'Kode salah. Coba lagi.', 'xiv-apparel' ) ) );
+		wp_send_json_error( array( 'message' => xiv_t( 'Wrong code. Try again.' ) ) );
 	}
 
 	delete_transient( $transient_key );
@@ -178,7 +178,7 @@ function xiv_otp_ajax_verify() {
 	do_action( 'wp_login', get_userdata( $user_id )->user_login, get_userdata( $user_id ) );
 
 	wp_send_json_success( array(
-		'message'  => __( 'Login berhasil.', 'xiv-apparel' ),
+		'message'  => xiv_t( 'Login successful.' ),
 		'redirect' => apply_filters( 'xiv_otp_login_redirect', wc_get_page_permalink( 'myaccount' ), $user_id ),
 	) );
 }
@@ -201,18 +201,18 @@ add_action( 'woocommerce_created_customer', 'xiv_otp_save_register_phone', 10, 3
  */
 function xiv_otp_validate_register_phone( $username, $email, $validation_errors ) {
 	if ( empty( $_POST['billing_phone'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce WC sudah dicek.
-		$validation_errors->add( 'billing_phone_error', __( 'Nomor HP (WhatsApp) wajib diisi.', 'xiv-apparel' ) );
+		$validation_errors->add( 'billing_phone_error', xiv_t( 'Phone number (WhatsApp) is required.' ) );
 		return;
 	}
 
 	$phone = xiv_otp_normalize_phone( sanitize_text_field( wp_unslash( $_POST['billing_phone'] ) ) );
 	if ( strlen( $phone ) < 9 ) {
-		$validation_errors->add( 'billing_phone_error', __( 'Nomor HP tidak valid.', 'xiv-apparel' ) );
+		$validation_errors->add( 'billing_phone_error', xiv_t( 'Invalid phone number.' ) );
 		return;
 	}
 
 	if ( xiv_otp_find_user_by_phone( $phone ) ) {
-		$validation_errors->add( 'billing_phone_error', __( 'Nomor HP sudah terdaftar. Silakan login.', 'xiv-apparel' ) );
+		$validation_errors->add( 'billing_phone_error', xiv_t( 'Phone number already registered. Please login.' ) );
 	}
 }
 add_action( 'woocommerce_register_post', 'xiv_otp_validate_register_phone', 10, 3 );
@@ -228,10 +228,10 @@ function xiv_otp_localize() {
 		'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 		'nonce'   => wp_create_nonce( 'xiv_otp_nonce' ),
 		'i18n'    => array(
-			'sending'     => __( 'MENGIRIM…', 'xiv-apparel' ),
-			'sent'        => __( 'KODE TERKIRIM', 'xiv-apparel' ),
-			'verifying'   => __( 'MEMVERIFIKASI…', 'xiv-apparel' ),
-			'resendIn'    => __( 'KIRIM ULANG', 'xiv-apparel' ),
+			'sending'     => xiv_t( 'SENDING…' ),
+			'sent'        => xiv_t( 'CODE SENT' ),
+			'verifying'   => xiv_t( 'VERIFYING…' ),
+			'resendIn'    => xiv_t( 'RESEND' ),
 		),
 	) );
 }

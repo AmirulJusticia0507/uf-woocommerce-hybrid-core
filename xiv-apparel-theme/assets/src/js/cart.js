@@ -10,6 +10,12 @@
     xivInitVariations();
   });
 
+  document.addEventListener('xiv:content-updated', function () {
+    xivInitAddToCart(document);
+    xivInitCartControls();
+    xivInitVariations();
+  });
+
   function xivInitAddToCart(scope) {
     var buttons = scope.querySelectorAll('a.add_to_cart_button, .ajax_add_to_cart');
     buttons.forEach(function (btn) {
@@ -58,7 +64,8 @@
       .then(function (r) { return r.json(); })
       .then(function (res) {
         if (button) {
-          button.textContent = res && res.success ? XIV.i18n.added : (XIV.i18n.error || '');
+          var msg = res && res.data && res.data.message;
+          button.textContent = res && res.success ? XIV.i18n.added : (msg || XIV.i18n.error);
         }
         if (res && res.success) {
           xivUpdateDrawer(res.data);

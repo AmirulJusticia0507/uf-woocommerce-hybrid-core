@@ -94,14 +94,14 @@ function xiv_single_add_to_cart() {
 			?>
 			<button type="submit" name="add-to-cart" value="<?php echo esc_attr( $product->get_id() ); ?>"
 					class="xiv-add-to-cart single_add_to_cart_button xiv-flex-1 xiv-bg-xiv-black xiv-text-white xiv-text-sm xiv-font-bold xiv-uppercase xiv-tracking-wide xiv-py-4 xiv-px-6 xiv-transition xiv-flex xiv-items-center xiv-justify-between hover:xiv-bg-xiv-gray-text">
-				<span><?php esc_html_e( 'ADD TO BAG', 'xiv-apparel' ); ?></span>
+				<span><?php echo esc_html( xiv_t( 'ADD TO BAG' ) ); ?></span>
 				<span aria-hidden="true">&rarr;</span>
 			</button>
 			<?php do_action( 'woocommerce_after_add_to_cart_button' ); ?>
 		</form>
 		<?php
 	} else {
-		echo '<p class="xiv-text-sm xiv-font-mono xiv-text-xiv-gray-text xiv-uppercase">' . esc_html__( 'UNAVAILABLE', 'xiv-apparel' ) . '</p>';
+		echo '<p class="xiv-text-sm xiv-font-mono xiv-text-xiv-gray-text xiv-uppercase">' . esc_html( xiv_t( 'UNAVAILABLE' ) ) . '</p>';
 	}
 
 	echo '</div>';
@@ -120,9 +120,9 @@ function xiv_variable_add_to_cart( $product ) {
 	<div class="xiv-variations" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
 		<?php if ( ! empty( $sizes ) ) : ?>
 			<p class="xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-mb-2">
-				<?php esc_html_e( 'SELECT SIZE', 'xiv-apparel' ); ?>
+				<?php echo esc_html( xiv_t( 'SELECT SIZE' ) ); ?>
 			</p>
-			<div class="xiv-flex xiv-flex-wrap xiv-gap-1.5" role="group" aria-label="<?php esc_attr_e( 'Size', 'xiv-apparel' ); ?>">
+			<div class="xiv-flex xiv-flex-wrap xiv-gap-1.5" role="group" aria-label="<?php echo esc_attr( xiv_t( 'Size' ) ); ?>">
 				<?php foreach ( $sizes as $size ) : ?>
 					<button type="button" class="xiv-size-option xiv-w-9 xiv-h-9 xiv-flex xiv-items-center xiv-justify-center xiv-text-xs xiv-font-bold xiv-border xiv-border-xiv-gray-light xiv-transition hover:xiv-border-xiv-black"
 							data-size="<?php echo esc_attr( $size ); ?>"><?php echo esc_html( $size ); ?></button>
@@ -135,7 +135,7 @@ function xiv_variable_add_to_cart( $product ) {
 		<button type="button" disabled
 				class="xiv-add-bag xiv-add-to-cart xiv-w-full xiv-mt-3 xiv-bg-xiv-black xiv-text-white xiv-text-sm xiv-font-bold xiv-uppercase xiv-tracking-wide xiv-py-4 xiv-px-6 xiv-transition xiv-flex xiv-items-center xiv-justify-between disabled:xiv-opacity-40 disabled:xiv-cursor-not-allowed"
 				data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
-			<span><?php esc_html_e( 'ADD TO BAG', 'xiv-apparel' ); ?></span>
+			<span><?php echo esc_html( xiv_t( 'ADD TO BAG' ) ); ?></span>
 			<span aria-hidden="true">&rarr;</span>
 		</button>
 
@@ -165,14 +165,14 @@ function xiv_shop_category_pills() {
 	$current = get_queried_object();
 	$current_id = ( $current && isset( $current->term_id ) ) ? $current->term_id : 0;
 
-	echo '<div class="xiv-flex xiv-flex-wrap xiv-gap-2 xiv-my-4" role="navigation" aria-label="' . esc_attr__( 'Categories', 'xiv-apparel' ) . '">';
+	echo '<div class="xiv-flex xiv-flex-wrap xiv-gap-2 xiv-my-4" role="navigation" aria-label="' . esc_attr( xiv_t( 'Categories' ) ) . '">';
 
 	$shop_url = wc_get_page_permalink( 'shop' );
 	printf(
 		'<a href="%s" class="xiv-px-4 xiv-py-1.5 xiv-text-xs xiv-font-bold xiv-uppercase xiv-border xiv-transition %s">%s</a>',
 		esc_url( $shop_url ),
 		! $current_id ? 'xiv-border-xiv-black xiv-bg-xiv-black xiv-text-white' : 'xiv-border-xiv-gray-light xiv-bg-transparent hover:xiv-border-xiv-black',
-		esc_html__( 'ALL', 'xiv-apparel' )
+		esc_html( xiv_t( 'ALL' ) )
 	);
 
 	foreach ( $cats as $cat ) {
@@ -191,3 +191,63 @@ function xiv_shop_category_pills() {
  * Remove default title wrappers (we render our own header).
  */
 add_filter( 'woocommerce_show_page_title', '__return_false' );
+
+/*
+ * ---------------------------------------------------------------
+ * Reviews & rating.
+ * ---------------------------------------------------------------
+ */
+
+/**
+ * Ensure product review/rating options default to enabled for this theme.
+ */
+function xiv_reviews_defaults() {
+	if ( false === get_option( 'woocommerce_enable_reviews' ) ) {
+		update_option( 'woocommerce_enable_reviews', 'yes' );
+	}
+	if ( false === get_option( 'woocommerce_enable_review_rating' ) ) {
+		update_option( 'woocommerce_enable_review_rating', 'yes' );
+	}
+}
+add_action( 'after_switch_theme', 'xiv_reviews_defaults' );
+
+/**
+ * Always allow reviews on products (feature: reviews & rating).
+ */
+add_filter( 'woocommerce_product_reviews_enabled', '__return_true' );
+
+/**
+ * Open comments for products so the review section renders.
+ */
+function xiv_product_comments_open( $open, $post_id ) {
+	if ( 'product' === get_post_type( $post_id ) ) {
+		return true;
+	}
+	return $open;
+}
+add_filter( 'comments_open', 'xiv_product_comments_open', 10, 2 );
+
+/**
+ * Compact rating line (stars + count) shown in the PDP summary,
+ * links to the reviews anchor.
+ */
+function xiv_product_rating_summary() {
+	global $product;
+
+	if ( ! $product || ! wc_review_ratings_enabled() ) {
+		return;
+	}
+
+	$count = $product->get_review_count();
+
+	echo '<div class="xiv-rating-summary xiv-mt-1.5">';
+	echo '<a href="#reviews" class="xiv-inline-flex xiv-items-center xiv-gap-2 xiv-text-xs xiv-font-mono xiv-uppercase xiv-tracking-widest xiv-text-xiv-gray-text hover:xiv-text-xiv-black xiv-no-underline">';
+	echo wc_get_rating_html( $product->get_average_rating() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	if ( $count ) {
+		echo '<span>(' . esc_html( $count ) . ')</span>';
+	} else {
+		echo '<span>' . esc_html( xiv_t( 'NO REVIEWS' ) ) . '</span>';
+	}
+	echo '</a></div>';
+}
+add_action( 'woocommerce_single_product_summary', 'xiv_product_rating_summary', 7 );

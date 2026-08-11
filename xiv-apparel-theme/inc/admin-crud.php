@@ -516,6 +516,9 @@ function xiv_admin_product_save() {
 		}
 		$product->set_image_id( $image_id );
 		$product->set_gallery_image_ids( $gallery_ids );
+		if ( method_exists( $product, 'set_reviews_allowed' ) ) {
+			$product->set_reviews_allowed( true );
+		}
 
 		$new_id = $product->save();
 	} catch ( Exception $e ) {

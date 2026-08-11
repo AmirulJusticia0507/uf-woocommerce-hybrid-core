@@ -10,6 +10,7 @@
     xivInitSearchOverlay();
     xivInitGallery();
     xivInitNewsletter();
+    xivInitNewsletterPopup();
     xivInitDrawer();
   });
 
@@ -37,6 +38,72 @@
         if (input) input.focus();
       }
     });
+
+    var input = document.getElementById('xiv-search-input');
+    var resultsBox = document.getElementById('xiv-live-search-results');
+    if (!input || !resultsBox || !window.XIV) return;
+
+    var debounceTimer = null;
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function render(data) {
+      if (!data || !data.results || !data.results.length) {
+        resultsBox.innerHTML = '<p class="xiv-live-search-empty xiv-text-xs xiv-uppercase xiv-tracking-widest xiv-text-xiv-gray-text xiv-py-4">' + escHtml(XIV.i18n.noResults) + '</p>';
+        return;
+      }
+      var searchUrl = input.form.action + '?s=' + encodeURIComponent(input.value) + '&post_type=product';
+      var html = '<ul class="xiv-live-search-list xiv-border xiv-border-xiv-gray-light xiv-bg-xiv-bg xiv-divide-y xiv-divide-xiv-gray-light">';
+      data.results.forEach(function (item) {
+        html += '<li><a href="' + escHtml(item.url) + '" class="xiv-flex xiv-items-center xiv-gap-4 xiv-py-3 xiv-px-4 hover:xiv-bg-white xiv-transition">';
+        html += '<img src="' + escHtml(item.image) + '" alt="" class="xiv-w-10 xiv-h-14 xiv-object-cover xiv-bg-stone-200 xiv-shrink-0" loading="lazy" />';
+        html += '<span class="xiv-flex-1 xiv-min-w-0">';
+        html += '<span class="xiv-block xiv-text-xs xiv-font-bold xiv-uppercase xiv-truncate">' + escHtml(item.title) + '</span>';
+        html += '<span class="xiv-block xiv-text-xs xiv-font-mono xiv-text-xiv-gray-text xiv-mt-0.5">' + escHtml(item.price) + '</span>';
+        html += '</span>';
+        if (item.stock === 'out') {
+          html += '<span class="xiv-text-[10px] xiv-font-mono xiv-uppercase xiv-text-xiv-gray-text">' + escHtml(XIV.i18n.soldOut) + '</span>';
+        }
+        html += '</a></li>';
+      });
+      html += '</ul>';
+      html += '<a href="' + escHtml(searchUrl) + '" class="xiv-block xiv-text-center xiv-text-xs xiv-font-bold xiv-uppercase xiv-tracking-widest xiv-py-3 xiv-bg-xiv-black xiv-text-white hover:xiv-bg-xiv-gray-text xiv-transition">' + escHtml(XIV.i18n.viewAll) + '</a>';
+      resultsBox.innerHTML = html;
+    }
+
+    function run() {
+      var term = input.value.trim();
+      if (term.length < 2) {
+        resultsBox.innerHTML = '';
+        return;
+      }
+      fetch(window.XIV.ajaxUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: 'action=xiv_live_search&term=' + encodeURIComponent(term) +
+          '&security=' + encodeURIComponent(XIV.nonce)
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (res) { render(res.data); })
+        .catch(function () { resultsBox.innerHTML = ''; });
+    }
+
+    input.addEventListener('input', function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(run, 300);
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!overlay.contains(e.target)) resultsBox.innerHTML = '';
+    });
   }
 
   function xivInitGallery() {
@@ -55,6 +122,81 @@
         thumb.classList.add('xiv-ring-2', 'xiv-ring-xiv-black');
       });
     });
+  }
+
+  function xivInitNewsletterPopup() {
+    var popup = document.getElementById('xiv-newsletter-popup');
+    if (!popup || !window.XIV) return;
+
+    var shown = false;
+
+    function show() {
+      if (shown) return;
+      shown = true;
+      popup.classList.remove('xiv-hidden');
+      var email = document.getElementById('xiv-popup-newsletter-email');
+      if (email) email.focus();
+    }
+
+    function setCookie(name, value, days) {
+      var date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + date.toUTCString() + '; path=/';
+    }
+
+    function close() {
+      popup.classList.add('xiv-hidden');
+    }
+
+    setTimeout(show, 4000);
+
+    popup.querySelectorAll('[data-xiv-popup-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+
+    var dismiss = popup.querySelector('[data-xiv-popup-dismiss]');
+    if (dismiss) {
+      dismiss.addEventListener('click', function () {
+        setCookie('xiv_popup_seen', '1', 7);
+        close();
+      });
+    }
+
+    var form = document.getElementById('xiv-popup-newsletter-form');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var email = document.getElementById('xiv-popup-newsletter-email');
+        var msg = form.querySelector('.xiv-popup-newsletter-msg');
+        if (!email || !email.value || !msg) return;
+
+        var button = form.querySelector('button[type="submit"]');
+        var original = button.textContent;
+        button.textContent = '...';
+
+        fetch(window.XIV.ajaxUrl, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+          body: 'action=xiv_newsletter&email=' + encodeURIComponent(email.value) +
+            '&security=' + encodeURIComponent(XIV.nonce)
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (res) {
+            msg.classList.remove('xiv-hidden');
+            msg.textContent = res && res.data && res.data.message ? res.data.message : original;
+            button.textContent = original;
+            if (res && res.success) {
+              setCookie('xiv_popup_seen', '1', 7);
+              email.value = '';
+              setTimeout(close, 2500);
+            }
+          })
+          .catch(function () {
+            button.textContent = original;
+          });
+      });
+    }
   }
 
   function xivInitNewsletter() {

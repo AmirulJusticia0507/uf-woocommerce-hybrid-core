@@ -21,7 +21,7 @@ xiv_canvas_open();
 		</article>
 
 	<?php endwhile; else : ?>
-		<p class="xiv-text-sm xiv-text-xiv-gray-text xiv-uppercase"><?php esc_html_e( 'Nothing found.', 'xiv-apparel' ); ?></p>
+		<p class="xiv-text-sm xiv-text-xiv-gray-text xiv-uppercase"><?php echo esc_html( xiv_t( 'Nothing found.' ) ); ?></p>
 	<?php endif; ?>
 
 </main>
